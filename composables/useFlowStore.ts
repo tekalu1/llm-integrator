@@ -1,0 +1,182 @@
+import { defineStore } from 'pinia';
+import { v4 as uuidv4 } from 'uuid';
+import { type FlowItem, type SavedFlowItem } from '@/types/flow';
+import { type ApiItem } from '@/types/api';
+
+export const useFlowStore = defineStore('flowStore', {
+  state: () => ({
+    savedFlowItems: [] as SavedFlowItem[],
+    uuuidOfLoadedSavedFlow: '' as string,
+    masterFlow : {
+      id: uuidv4(),
+      name: "",
+      type: "flow",
+      description: "",
+      isItemActive: true,
+      variables: {},
+      executionResults: [],
+      flowItems: [],
+    } as FlowItem
+  }),
+  actions: {
+    addFlowItem(
+      parentItems: FlowItem[],
+      newflowItem = {
+        id: "",
+        name: "",
+        type: "flow",
+        description: "",
+        isItemActive: true,
+        variables: {},
+        executionResults: [],
+        flowItems: [],
+      } as FlowItem
+    ) {
+      let newFlowItemIdUpdated = JSON.parse(JSON.stringify(newflowItem));
+      newFlowItemIdUpdated.id = uuidv4()
+      parentItems.push(newFlowItemIdUpdated);
+    },
+    duplicateFlowItem(parentItems: FlowItem[], flowItem: FlowItem){
+      this.addFlowItem(parentItems, flowItem)
+    },
+    addApiItem(
+      parentItems: FlowItem[],
+      newflowItem = {
+        id: "",
+        name: "",
+        type: "api",
+        description: "",
+        isItemActive: true,
+        variables: {},
+        executionResults: [],
+        flowItems: [],
+        endpoint: "",
+        method: "GET",
+        headers: [],
+        body: [],
+        script: "",
+        isScriptEnabled: false
+      } as ApiItem
+    )
+    {
+      this.addFlowItem(parentItems, newflowItem)
+    },
+    removeFlowItemById(targetId: string, setParentItem: boolean, parentItems: FlowItem[]) {
+      let parentItemsTemp =  this.masterFlow.flowItems
+      if(setParentItem){
+        parentItemsTemp = parentItems
+      }
+      parentItemsTemp.forEach((flowItem, index) => 
+        {
+          if(flowItem.id == targetId){
+            parentItemsTemp.splice(index, 1)
+            return
+          }else{
+            this.removeFlowItemById(targetId, true, flowItem.flowItems)
+          }
+        }
+      )
+    },
+    applyFlowVariables(obj, flowItem: FlowItem) {
+      // 変数のキーを ${variableName} の形式で取得し展開
+      let result = JSON.parse(JSON.stringify(obj))
+      let resultStr = JSON.stringify(result)
+
+      resultStr = this.applyFlowVariablesOnString(resultStr, flowItem)
+      console.log(resultStr)
+
+      return JSON.parse(resultStr)
+    },
+    applyFlowVariablesOnString(text: string, flowItem: FlowItem): string {
+      // 変数のキーを ${variableName} の形式で取得し展開
+      let result = text
+      for(let key in flowItem.variables){
+        result = result.replace("{{" + key + "}}",flowItem.variables[key])
+      }
+
+      return result.replace(/\n/g, "\\n")
+    },
+    loadFlows(){
+      try{
+        this.savedFlowItems = JSON.parse(localStorage.getItem('saved-flow-items') || '[]');
+      }catch(e){
+        console.error('Failed to load saved flows:', e);
+      }
+    },
+    saveFlow(flowItem: FlowItem) {
+      const savedflowItem: SavedFlowItem = {
+        id: uuidv4(),
+        flowItem: flowItem,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+
+      this.savedFlowItems.push(savedflowItem)
+      localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
+    },
+    saveFlowAs(flowItem: FlowItem) {
+      const savedflowItem: SavedFlowItem = {
+        id: uuidv4(),
+        flowItem: flowItem,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+
+      this.savedFlowItems.push(savedflowItem)
+      // flowItem.id = uuidTemp
+      localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
+    },
+    deleteSavedFlow(deleteIndex: number) {
+      this.savedFlowItems.splice(deleteIndex,1)
+      localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
+    },
+    loadFlow(savedFlowItem: SavedFlowItem) {
+      try {
+        const stored = localStorage.getItem('saved-flow-items');
+        if (stored) {
+          this.savedFlowItems = JSON.parse(stored);
+        }
+      } catch (e) {
+        console.error('Failed to load saved flows:', e);
+      }
+      
+      this.masterFlow = savedFlowItem.flowItem;
+      this.uuuidOfLoadedSavedFlow = savedFlowItem.id
+    },
+    importFlow(flowItem: FlowItem) {
+      this.masterFlow = flowItem
+    },
+    exportFlow(flowItem: FlowItem){
+      const blob = new Blob([JSON.stringify(flowItem, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${flowItem.name || 'flow'}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    
+    addHeader(apiItem: ApiItem) {
+      if (apiItem) {
+        apiItem.headers.push({ key: '', type: 'string', value: '' });
+      }
+    },
+    removeHeader(apiItem: ApiItem, index: number) {
+      if (apiItem) {
+        apiItem.headers.splice(index, 1);
+      }
+    },
+    addBodyParam(apiItem: ApiItem) {
+      if (apiItem) {
+        apiItem.body.push({ key: '', type: 'string', value: '' });
+      }
+    },
+    removeBodyParam(apiItem: ApiItem, index: number) {
+      if (apiItem) {
+        apiItem.body.splice(index, 1);
+      }
+    },
+  }
+});
