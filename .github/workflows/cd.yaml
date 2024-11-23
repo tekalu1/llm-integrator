@@ -38,4 +38,4 @@ jobs:
           git add -A
           git commit -m "Deploy .output to dist branch"
           # distブランチにpush
-          git push -f https://${GH_PAT}@github.com/tekalu1/api-automator.git dist
+          git push -f https://${GH_PAT}@github.com/tekalu1/llm-integrator.git dist
