@@ -1,7 +1,7 @@
 <template>
   <div class="p-2 w-full  bg-white backdrop-blur-md bg-opacity-50 border-gray-300 border rounded-2xl py-4 px-4 flex flex-col justify-start items-center z-10">
     <AtomsCommonDynamicSizeWrapper id-name="variable-list" class="w-full" >
-      <div class="rounded-md w-full h-full">
+      <div class="rounded-md w-full ">
         <div class="w-full flex items-center justify-start">
           <p class="mr-2">
             変数

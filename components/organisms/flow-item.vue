@@ -2,7 +2,7 @@
   const flowStore = useFlowStore();
   const uiStore = useUiStore();
   const APIExecution = useAPIExecution();
-  import { type FlowItem, type ApiItem } from '@/types/flow';
+  import { type FlowItem } from '@/types/flow';
 
   const props = defineProps({
     flowItem: {
@@ -12,12 +12,11 @@
   });
 </script>
 <template>
-  <div class="p-2 rounded-2xl border border-gray-300 mt-2 overflow-hidden transition-all duration-200" :class="flowItem.isItemActive ? 'bg-white bg-opacity-50 ':'bg-black bg-opacity-10'">
-    <!-- <div :class="flowItem.isItemActive ? 'opacity-0':' opacity-20'" class="bg-black pointer-events-none transition-all duration-150 absolute h-full w-full top-0 left-0">
-    </div> -->
+  <div class="p-2 rounded-2xl  mt-2 overflow-hidden transition-all duration-150" :class="[flowItem.isItemActive ? 'bg-white bg-opacity-50 ':'bg-black bg-opacity-10', uiStore.focusedItemId === flowItem.id ? 'border-2 border-blue-500':'border border-gray-300']" @click.stop="uiStore.setFocusedItemId(flowItem.id)" >
     <AtomsCommonDynamicSizeWrapper :id-name="'dynmcwrpr_' + flowItem.id">
       <div v-if="flowItem" class="w-full">
         <div class="flex items-center justify-center mb-4">
+          <AtomsCommonItemLogo :item-type="flowItem.type" :rounded="true" />
           <div class="flex items-center justify-start flex-grow">
             <input
               v-model="flowItem.name"
@@ -88,11 +87,18 @@
           </template>
           <template v-slot:modal>
             <div class="flex flex-col items-center justify-center w-full">
-              <button @click="flowStore.addFlowItem(flowItem.flowItems)" class="rounded-sm px-2  hover:bg-black hover:bg-opacity-10 w-full" >
-                Flow
+              <button @click="flowStore.addFlowItem(flowItem.flowItems)" class="rounded-sm px-2  hover:bg-black hover:bg-opacity-10 w-full flex items-center justify-start py-1" >
+                <AtomsCommonItemLogo item-type="flow" size="small" :rounded="true" />
+                <p class="ml-2">
+                  Flow
+                </p>
+                
               </button>
-              <button @click="flowStore.addApiItem(flowItem.flowItems)" class="rounded-sm  px-2  hover:bg-black hover:bg-opacity-10 w-full text-nowrap">
-                APIリクエスト
+              <button @click="flowStore.addApiItem(flowItem.flowItems)" class="rounded-sm  px-2  hover:bg-black hover:bg-opacity-10 w-full  flex items-center justify-start py-1">
+                <AtomsCommonItemLogo item-type="api" size="small" :rounded="true" />
+                <p class="ml-2">
+                  APIリクエスト
+                </p>
               </button>
             </div>
           </template>

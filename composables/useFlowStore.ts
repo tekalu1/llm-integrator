@@ -33,11 +33,21 @@ export const useFlowStore = defineStore('flowStore', {
       } as FlowItem
     ) {
       let newFlowItemIdUpdated = JSON.parse(JSON.stringify(newflowItem));
-      newFlowItemIdUpdated.id = uuidv4()
+      this.changeFlowId(newFlowItemIdUpdated);
       parentItems.push(newFlowItemIdUpdated);
     },
-    duplicateFlowItem(parentItems: FlowItem[], flowItem: FlowItem){
-      this.addFlowItem(parentItems, flowItem)
+    changeFlowId(
+      flowItem:FlowItem
+    ) {
+      flowItem.id = uuidv4()
+      if(flowItem.flowItems.length > 0){
+        flowItem.flowItems.forEach((flowItemChild) => {
+          this.changeFlowId(flowItemChild)
+        })
+      }
+    },
+    duplicateFlowItem(parentItem: FlowItem, flowItem: FlowItem){
+      this.addFlowItem(parentItem.flowItems, flowItem)
     },
     addApiItem(
       parentItems: FlowItem[],
@@ -111,21 +121,27 @@ export const useFlowStore = defineStore('flowStore', {
         updatedAt: Date.now()
       }
 
-      this.savedFlowItems.push(savedflowItem)
-      localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
-    },
-    saveFlowAs(flowItem: FlowItem) {
-      const savedflowItem: SavedFlowItem = {
-        id: uuidv4(),
-        flowItem: flowItem,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
+      if(this.uuuidOfLoadedSavedFlow !== ''){
+        const existingIndex = this.savedFlowItems.findIndex((item: SavedFlowItem) => item.id === this.uuuidOfLoadedSavedFlow);
+        this.savedFlowItems[existingIndex] = savedflowItem
+      }else{
+        this.savedFlowItems.push(savedflowItem)
       }
-
-      this.savedFlowItems.push(savedflowItem)
-      // flowItem.id = uuidTemp
       localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
+      this.uuuidOfLoadedSavedFlow = savedflowItem.id;
     },
+    // saveFlowAs(flowItem: FlowItem, name: string, description: string) {
+    //   const savedflowItem: SavedFlowItem = {
+    //     id: uuidv4(),
+    //     flowItem: JSON.parse(JSON.stringify(flowItem)),
+    //     createdAt: Date.now(),
+    //     updatedAt: Date.now()
+    //   }
+    //   savedflowItem.flowItem.name = name
+    //   savedflowItem.flowItem.description = description
+    //   this.savedFlowItems.push(savedflowItem)
+    //   localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
+    // },
     deleteSavedFlow(deleteIndex: number) {
       this.savedFlowItems.splice(deleteIndex,1)
       localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));

@@ -35,12 +35,13 @@
         <div class="relative w-11 h-6 bg-gray-200 outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#842ff7] hover:ring-1 hover:ring-[#842ff7] transition-all duration-300"></div>
         <span class="ms-3  dark:text-gray-300">スクリプトを有効にする</span>
       </label>
-      <div class="flex flex-col items-start justify-center bg-white p-2 rounded-lg overflow-hidden w-full">
-        <div class="flex items-center justify-start" >
-          <p class="m-2">
-            スクリプト
-          </p>
-          <button @click="APIExecution.executeScript(apiItem)" >
+      <div class="flex flex-col items-start justify-center  p-2 rounded-lg overflow-hidden w-full transition-all duration-200 relative bg-white z-0" :class="apiItem.isScriptEnabled ? '':'pointer-events-none'">
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none bg-black z-10 duration-150 transition-all" :class="apiItem.isScriptEnabled ? 'opacity-0':'opacity-10'">
+
+        </div>
+        <div class="flex flex-col items-start justify-start" >
+          <button @click="APIExecution.executeScript(apiItem)" class=" hover:bg-gray-200 px-2 rounded-md transition-all duration-150 mb-4" >
+            <font-awesome-icon :icon="['fas', 'play']" />
             テスト実行
           </button>
         </div>
@@ -55,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-  import { type ApiItem } from '@/types/ApiItem';
+  import { type ApiItem } from '@/types/api';
   const uiStore = useUiStore();
   const APIExecution = useAPIExecution();
   const props = defineProps({

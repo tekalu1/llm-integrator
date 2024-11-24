@@ -9,7 +9,8 @@ export const useUiStore = defineStore('uiStore', {
       "POST": "#f75c2f",
       "DELETE": "#2f50f7",
       "PUT": "#f72ff0",
-    }
+    },
+    focusedItemId: "",
   }),
   actions: {
     getEditModeStatus(flowId: string): string{
@@ -29,6 +30,9 @@ export const useUiStore = defineStore('uiStore', {
     },
     setItemDisplayMode(flowId: string, itemDisplayMode: string): void{
       this.itemDisplayMode[flowId] = itemDisplayMode
+    },
+    setFocusedItemId(flowId: string): void{
+      this.focusedItemId = flowId
     }
   }
 });
