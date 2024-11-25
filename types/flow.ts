@@ -1,7 +1,7 @@
 export type FlowItem = {
   id: string;
   name: string;
-  type: 'flow'|'api';
+  type: 'flow'|'api'|'condition';
   description: string;
   isItemActive: boolean;
   variables: {};

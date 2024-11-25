@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { type FlowItem } from '@/types/flow';
 import { type ApiItem } from '@/types/api';
+import { type ConditionItem, type Condition } from '@/types/condition';
 
 export const useAPIExecution = defineStore('APIExecution', {
   state: () => ({
@@ -117,13 +118,17 @@ export const useAPIExecution = defineStore('APIExecution', {
         this.isExecuting = false; // 実行ステータスを解除
       }
     },
-    async callApi (flowItem: FlowItem | ApiItem) {
+    async callApi (flowItem: FlowItem | ApiItem | ConditionItem) {
       const flowStore = useFlowStore();
       if(!flowItem.isItemActive){
-        console.log("aa",flowItem.isItemActive)
         return
       }
       try {
+        if(flowItem.type === 'condition'){
+          if(!flowStore.evaluateCondition(flowItem.condition)){
+            return
+          }
+        }
         if(flowItem.type === 'api'){
           let stepConverted: ApiItem = JSON.parse(JSON.stringify(flowItem))
           stepConverted.headers = flowStore.applyFlowVariables(this.transformEntries(flowItem.headers),flowItem)

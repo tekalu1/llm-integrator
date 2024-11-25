@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { type FlowItem, type SavedFlowItem } from '@/types/flow';
 import { type ApiItem } from '@/types/api';
+import { type ConditionItem, type Condition } from '@/types/condition';
 
 export const useFlowStore = defineStore('flowStore', {
   state: () => ({
@@ -71,6 +72,28 @@ export const useFlowStore = defineStore('flowStore', {
     {
       this.addFlowItem(parentItems, newflowItem)
     },
+    addConditionItem(
+      parentItems: FlowItem[],
+      newflowItem = {
+        id: "",
+        name: "",
+        type: "condition",
+        description: "",
+        isItemActive: true,
+        variables: {},
+        executionResults: [],
+        flowItems: [],
+        condition: {
+          id: uuidv4(),
+          leftSide: '',
+          comparisonOperator: '=',
+          rightSide: ''
+        } as Condition
+      } as ConditionItem
+    )
+    {
+      this.addFlowItem(parentItems, newflowItem)
+    },
     removeFlowItemById(targetId: string, setParentItem: boolean, parentItems: FlowItem[]) {
       let parentItemsTemp =  this.masterFlow.flowItems
       if(setParentItem){
@@ -130,18 +153,6 @@ export const useFlowStore = defineStore('flowStore', {
       localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
       this.uuuidOfLoadedSavedFlow = savedflowItem.id;
     },
-    // saveFlowAs(flowItem: FlowItem, name: string, description: string) {
-    //   const savedflowItem: SavedFlowItem = {
-    //     id: uuidv4(),
-    //     flowItem: JSON.parse(JSON.stringify(flowItem)),
-    //     createdAt: Date.now(),
-    //     updatedAt: Date.now()
-    //   }
-    //   savedflowItem.flowItem.name = name
-    //   savedflowItem.flowItem.description = description
-    //   this.savedFlowItems.push(savedflowItem)
-    //   localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
-    // },
     deleteSavedFlow(deleteIndex: number) {
       this.savedFlowItems.splice(deleteIndex,1)
       localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
@@ -173,7 +184,6 @@ export const useFlowStore = defineStore('flowStore', {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     },
-    
     addHeader(apiItem: ApiItem) {
       if (apiItem) {
         apiItem.headers.push({ key: '', type: 'string', value: '' });
@@ -194,5 +204,70 @@ export const useFlowStore = defineStore('flowStore', {
         apiItem.body.splice(index, 1);
       }
     },
+    changeConditionType(condition: Condition, type: 'condition'|'string'|'number'|'boolean', direction: 'left'|'right' ) {
+      let value: string | Condition | number | boolean;
+
+      if (type == 'condition') {
+        value = { id:uuidv4(), leftSide: '', comparisonOperator: '=', rightSide: '' }
+      }else if(type == 'string'){
+        value = ''
+      }else if(type == 'number'){
+        value = 0
+      }else{
+        value = true
+      }
+
+      if(direction == 'left'){
+        condition.leftSide = value
+      }else{
+        condition.rightSide = value
+      }
+    },
+    resetCondition(condition: Condition) {
+      if (condition) {
+        condition.id = uuidv4()
+        condition.leftSide = ''
+        condition.comparisonOperator = '='
+        condition.rightSide = '' 
+      }
+    },
+    evaluateCondition(condition: Condition): boolean {
+      const evaluateValue = (value: string | Condition | number | boolean): any => {
+          if (typeof value === 'object' && 'comparisonOperator' in value) {
+              // If the value is a nested Condition, evaluate it recursively
+              return this.evaluateCondition(value);
+          }
+          return value;
+      };
+  
+      const left = evaluateValue(condition.leftSide);
+      const right = evaluateValue(condition.rightSide);
+  
+      switch (condition.comparisonOperator) {
+          case '=':
+              return left === right;
+          case '!=':
+              return left !== right;
+          case '<':
+              return left < right;
+          case '>':
+              return left > right;
+          case '<=':
+              return left <= right;
+          case '>=':
+              return left >= right;
+          case 'contain':
+              if (typeof left === 'string' && typeof right === 'string') {
+                  return left.includes(right);
+              }
+              throw new Error(`Invalid types for 'contain' operator: ${typeof left} and ${typeof right}`);
+          case '&':
+              return Boolean(left) && Boolean(right);
+          case '|':
+              return Boolean(left) || Boolean(right);
+          default:
+              throw new Error(`Unsupported operator: ${condition.comparisonOperator}`);
+      }
+    }
   }
 });
