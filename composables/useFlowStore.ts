@@ -123,8 +123,8 @@ export const useFlowStore = defineStore('flowStore', {
     applyFlowVariablesOnString(text: string, flowItem: FlowItem): string {
       // 変数のキーを ${variableName} の形式で取得し展開
       let result = text
-      for(let key in flowItem.variables){
-        result = result.replace("{{" + key + "}}",flowItem.variables[key])
+      for(let key in this.masterFlow.variables){
+        result = result.replace("{{" + key + "}}",this.masterFlow.variables[key])
       }
 
       return result.replace(/\n/g, "\\n")

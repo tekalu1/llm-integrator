@@ -11,9 +11,12 @@ export type FlowItem = {
 
 
 export type ExecutionResult = {
+  id: string;
   success: boolean;
   data: {};
-  error: {};
+  error?: {};
+  executionDate: number;
+  duration: number;
 }
 
 export type ExecutionHistory = {

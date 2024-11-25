@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type FlowItem } from '@/types/flow';
+import { type ExecutionResult, type FlowItem } from '@/types/flow';
 import { type ApiItem } from '@/types/api';
 import { type ConditionItem, type Condition } from '@/types/condition';
 
@@ -120,6 +120,7 @@ export const useAPIExecution = defineStore('APIExecution', {
     },
     async callApi (flowItem: FlowItem | ApiItem | ConditionItem) {
       const flowStore = useFlowStore();
+      const startTime = Date.now();
       if(!flowItem.isItemActive){
         return
       }
@@ -137,7 +138,15 @@ export const useAPIExecution = defineStore('APIExecution', {
           console.log(stepConverted)
           const result = await this.executeStep(stepConverted); // 個別ステップをサーバーに送信
           if (result && result.result) {
-            flowItem.executionResults.push(result.result)
+            const executionResult: ExecutionResult = {
+              id: uuidv4(),
+              success: result.result.success,
+              data: result.result.data,
+              error: result.result.error ? result.result.error : null,
+              executionDate: startTime,
+              duration: Date.now() - startTime
+            } 
+            flowItem.executionResults.push(executionResult)
             this.executeScript(flowItem)
           }
           console.log("result : ")

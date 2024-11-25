@@ -49,8 +49,24 @@
       </div>
     </div>
     <div v-if="uiStore.getItemDisplayMode(apiItem.id) === 'result'">
-      <div v-for="(executionResult, index) in apiItem.executionResults" :key="index">
-        {{ executionResult }}
+      <div v-for="(executionResult, index) in apiItem.executionResults" :key="index" class="bg-white backdrop-blur-md bg-opacity-50 border-gray-300 border rounded-lg p-2 mb-2">
+        <div v-if="executionResult.success">
+          <p :class="executionResult.success?'text-green-600':'text-red-600'" class="font-bold">
+            {{ executionResult.success ? '成功' : '失敗' }}
+          </p>
+          <p>
+            実行日時：{{ new Date(executionResult.executionDate).toLocaleString() }}
+          </p>
+          <p>
+            実行時間：{{ executionResult.duration }} ms
+          </p>
+          <div class="bg-gray-50 p-4 rounded overflow-scroll relative w-full max-h-60">
+            <pre class="text-sm whitespace-pre-wrap">{{ formatResponse(executionResult.data) }}</pre>
+          </div>
+        </div>
+      </div>
+      <div v-if="APIExecution.isExecuting" class="flex items-center justify-center p-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
       </div>
     </div>
 </template>
@@ -65,4 +81,11 @@
           default: 0,
       },
   })
+  const formatResponse = (response: any) => {
+    try {
+      return JSON.stringify(response, null, 2);
+    } catch {
+      return response;
+    }
+  };
 </script>
