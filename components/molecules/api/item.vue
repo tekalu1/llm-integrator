@@ -50,7 +50,7 @@
     </div>
     <div v-if="uiStore.getItemDisplayMode(apiItem.id) === 'result'">
       <div v-for="(executionResult, index) in apiItem.executionResults" :key="index" class="bg-white backdrop-blur-md bg-opacity-50 border-gray-300 border rounded-lg p-2 mb-2">
-        <div v-if="executionResult.success">
+        <div class="flex flex-col items-start justify-center">
           <p :class="executionResult.success?'text-green-600':'text-red-600'" class="font-bold">
             {{ executionResult.success ? '成功' : '失敗' }}
           </p>
@@ -60,10 +60,14 @@
           <p>
             実行時間：{{ executionResult.duration }} ms
           </p>
-          <div class="bg-gray-50 p-4 rounded overflow-scroll relative w-full max-h-60">
-            <pre class="text-sm whitespace-pre-wrap">{{ formatResponse(executionResult.data) }}</pre>
+          <div v-if="executionResult.success" class="bg-gray-50 p-4 rounded overflow-scroll relative w-[600px] max-h-60">
+            {{ formatResponse(executionResult.data) }}
           </div>
+          <p v-if="!executionResult.success">
+            エラー内容：{{ executionResult.error }}
+          </p>
         </div>
+
       </div>
       <div v-if="APIExecution.isExecuting" class="flex items-center justify-center p-4">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>

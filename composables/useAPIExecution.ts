@@ -141,7 +141,7 @@ export const useAPIExecution = defineStore('APIExecution', {
             const executionResult: ExecutionResult = {
               id: uuidv4(),
               success: result.result.success,
-              data: result.result.data,
+              data: result.result.data ? result.result.data : {},
               error: result.result.error ? result.result.error : null,
               executionDate: startTime,
               duration: Date.now() - startTime
