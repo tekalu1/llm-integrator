@@ -3,7 +3,7 @@
     <OrganismsHeader />
     <div class="flex items-center justify-center flex-grow w-full  text-[#183153]">
       <div class="">
-        <AtomsCommonCoolScrollBarContainer class="h-[calc(100vh-128px)] pl-8 pt-2 pb-8 rounded-lg">
+        <AtomsCommonCoolScrollBarContainer class="h-[calc(100vh-128px)] pt-2 pb-8 pl-2 rounded-lg">
           <OrganismsSideMenu />
         </AtomsCommonCoolScrollBarContainer>
       </div>

@@ -48,29 +48,39 @@
         <MonacoEditor v-model="apiItem.script" lang="json" class="h-72 w-full" />
       </div>
     </div>
-    <div v-if="uiStore.getItemDisplayMode(apiItem.id) === 'result'">
-      <div v-for="(executionResult, index) in apiItem.executionResults" :key="index" class="bg-white backdrop-blur-md bg-opacity-50 border-gray-300 border rounded-lg p-2 mb-2">
-        <div class="flex flex-col items-start justify-center">
-          <p :class="executionResult.success?'text-green-600':'text-red-600'" class="font-bold">
-            {{ executionResult.success ? '成功' : '失敗' }}
-          </p>
-          <p>
-            実行日時：{{ new Date(executionResult.executionDate).toLocaleString() }}
-          </p>
-          <p>
-            実行時間：{{ executionResult.duration }} ms
-          </p>
-          <div v-if="executionResult.success" class="bg-gray-50 p-4 rounded overflow-scroll relative w-[600px] max-h-60">
-            {{ formatResponse(executionResult.data) }}
-          </div>
-          <p v-if="!executionResult.success">
-            エラー内容：{{ executionResult.error }}
-          </p>
-        </div>
-
-      </div>
+    <div v-if="uiStore.getItemDisplayMode(apiItem.id) === 'result'"  class="w-full">
+      
       <div v-if="APIExecution.isExecuting" class="flex items-center justify-center p-4">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500">
+            </div>
+        </div>
+      <div v-if="apiItem.executionResults.length > 0 ">
+        <p class="font-bold mb-4">
+          最新の実行
+        </p>
+        <AtomsApiResultCard :execution-result="apiItem.executionResults[apiItem.executionResults.length - 1]" />
+      </div>
+      
+      <div v-if="apiItem.executionResults.length > 1 " class="w-full">
+        <AtomsCommonAccordion :id-name="'result-list'" >
+          <template v-slot:summary>
+            <button class="flex items-center justify-start mt-2 hover:bg-gray-200 p-2 rounded-md transition duration-150">
+                <font-awesome-icon :icon="['fas', 'chevron-down']" />
+                <p class="font-bold ml-2">
+                  過去の実行
+                </p>
+            </button>
+          </template>
+          <template v-slot:detail>
+            <div  class="flex flex-col-reverse items-center justify-center mt-4 w-full">
+              <div v-for="(executionResult, index) in apiItem.executionResults" :key="index" class="mb-2 w-full">
+                <div v-if="index !== apiItem.executionResults.length - 1 " class="w-full">
+                  <AtomsApiResultCard :execution-result="executionResult" />
+                </div>
+              </div>
+            </div>
+          </template>
+        </AtomsCommonAccordion>
       </div>
     </div>
 </template>

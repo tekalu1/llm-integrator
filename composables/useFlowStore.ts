@@ -240,8 +240,8 @@ export const useFlowStore = defineStore('flowStore', {
           return value;
       };
   
-      const left = evaluateValue(condition.leftSide);
-      const right = evaluateValue(condition.rightSide);
+      const left = this.applyFlowVariablesOnString(evaluateValue(condition.leftSide),this.masterFlow);
+      const right = this.applyFlowVariablesOnString(evaluateValue(condition.rightSide),this.masterFlow);
   
       switch (condition.comparisonOperator) {
           case '=':

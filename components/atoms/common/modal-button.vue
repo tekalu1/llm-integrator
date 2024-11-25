@@ -53,10 +53,10 @@ const setReleaseWrapperHeight = () => {
             <slot name="button" />
         </div>
         <div :class="visibility ? '' : 'opacity-0 pointer-events-none'" class="relative transition-all duration-200 " ref="element" >
-            <div class="fixed left-0 top-0 items-center w-full h-full"
+            <div class="fixed left-0 top-0 items-center w-full h-full z-10"
                 @click="changeVisibility">
             </div>
-            <div class="fixed p-1 rounded-md overflow-hidden shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)] " :style="{top: floatingElementChildTop + 'px', left: floatingElementChildLeft + 'px'}"  :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor"  @click="changeVisibility">
+            <div class=" p-1 rounded-md overflow-hidden shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)] z-20" :style="{top: floatingElementChildTop + 'px', left: floatingElementChildLeft + 'px', position: 'fixed'}"  :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor"  @click="changeVisibility">
                 <div class="flex flex-col " >
                     <slot name="modal" />
                 </div>
