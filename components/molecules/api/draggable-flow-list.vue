@@ -1,6 +1,6 @@
 <template>
   <div  class="flex flex-col items-center justify-center w-full">
-    <draggable ref="el" v-model="flowItem.flowItems" :animation="150" easing="ease" group="flow" ghostClass="ghost" class=" my-1 w-full flex flex-col items-center justify-center" >
+    <draggable ref="el" v-model="flowItem.flowItems" :animation="150" easing="ease" group="flow" ghostClass="ghost" :swapThreshold="0.1" class=" my-1 w-full flex flex-col items-center justify-center" >
       <template v-for=" (flowItemChild,index) in flowItem.flowItems" :key="flowItem.id" >
           <div class="flex border bg-white bg-opacity-50 border-gray-300 rounded-lg mb-1 w-full overflow-hidden pr-1">
             <AtomsCommonItemLogo :item-type="flowItemChild.type" size="small" />
@@ -21,7 +21,7 @@
                 </div>
                 <AtomsCommonModalButton class="" >
                   <template v-slot:button>
-                    <button class="rounded-md mr-2 hover:bg-gray-200 px-2 py-1 transition-all duration-150 ">
+                    <button class="rounded-md mr-2 hover:bg-gray-200 px-2 transition-all duration-150 ">
                       <font-awesome-icon :icon="['fas', 'plus']" class="" />
                     </button>
                   </template>

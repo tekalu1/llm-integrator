@@ -1,5 +1,5 @@
 <template>
-    <div class="relative w-full py-1 scroll-smooth overflow-y-auto 
+    <div class="relative w-full scroll-smooth overflow-y-auto 
         [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar-track]:bg-gray-100
         [&::-webkit-scrollbar-thumb]:bg-[#c397fb]

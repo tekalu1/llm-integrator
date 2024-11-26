@@ -1,54 +1,65 @@
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid';
-const props = defineProps({
-    modalPossition: {
-        type: String,
-        default: "bottom",
-    },
-    bgColor: {
-        type: String,
-        default: "white",
-    },
-    bgOpacity: {
-        type: String,
-        default: "100",
-    },
-    buttonColor: {
-        type: String,
-        default: "[#842ff7]",
-    },
-    borderThickness : {
-        type: String,
-        default: null,
-    },
-    borderColor: {
-        type: String,
-        default: null,
-    },
-})
+    import { v4 as uuidv4 } from 'uuid';
+    const props = defineProps({
+        modalPossition: {
+            type: String,
+            default: "bottom",
+        },
+        bgColor: {
+            type: String,
+            default: "white",
+        },
+        bgOpacity: {
+            type: String,
+            default: "100",
+        },
+        buttonColor: {
+            type: String,
+            default: "[#842ff7]",
+        },
+        borderThickness : {
+            type: String,
+            default: null,
+        },
+        borderColor: {
+            type: String,
+            default: null,
+        },
+    })
 
-const element = ref<HTMLElement | null>(null);
-const visibility = ref(false)
-const changeVisibility = () => {
-    visibility.value = !visibility.value
-}
-
-const floatingElementChildTop = ref(0)
-const floatingElementChildLeft = ref(0)
-
-const setReleaseWrapperHeight = () => {
-    try{
-        const rect = element.value.getBoundingClientRect(); // 現在の位置を取得
-        floatingElementChildTop.value = rect.top;
-        floatingElementChildLeft.value = rect.left;
-    }catch(e){
-        console.error(e)
+    const element = ref<HTMLElement | null>(null);
+    const content = ref<HTMLElement | null>(null);
+    const visibility = ref(false)
+    const changeVisibility = () => {
+        visibility.value = !visibility.value
     }
-  }
+
+    const floatingElementChildTop = ref(0)
+    const floatingElementChildLeft = ref(0)
+    const contentHeight = ref(0)
+
+
+    const setReleaseWrapperHeight = () => {
+        try{
+            const rect = element.value.getBoundingClientRect(); // 現在の位置を取得
+            contentHeight.value = content.value?.clientHeight;
+            floatingElementChildTop.value = rect.top;
+            floatingElementChildLeft.value = rect.left;
+        }catch(e){
+            console.error(e)
+        }
+    }
+    const getTop = computed(()=>{
+        if(props.modalPossition === 'bottom'){
+            return floatingElementChildTop.value
+        }else if(props.modalPossition === 'top'){
+            return floatingElementChildTop.value - contentHeight.value
+        }
+    })
 </script>
 
 <template>
-    <div class="flex flex-col items-start justify-center w-fit">
+    <div class="flex items-start justify-center w-fit" :class="modalPossition === 'bottom' ? 'flex-col':'flex-col-reverse'">
         <div @click="changeVisibility(); setReleaseWrapperHeight();" class="">
             <slot name="button" />
         </div>
@@ -56,8 +67,8 @@ const setReleaseWrapperHeight = () => {
             <div class="fixed left-0 top-0 items-center w-full h-full z-10"
                 @click="changeVisibility">
             </div>
-            <div class=" p-1 rounded-md overflow-hidden shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)] z-20" :style="{top: floatingElementChildTop + 'px', left: floatingElementChildLeft + 'px', position: 'fixed'}"  :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor"  @click="changeVisibility">
-                <div class="flex flex-col " >
+            <div class=" p-1 rounded-md overflow-hidden shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)] z-20" :style="{top: getTop + 'px', left: floatingElementChildLeft + 'px', position: 'fixed'}"  :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor"  @click="changeVisibility">
+                <div class="flex flex-col " ref="content" >
                     <slot name="modal" />
                 </div>
             </div>

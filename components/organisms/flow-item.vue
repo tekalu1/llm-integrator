@@ -12,7 +12,7 @@
   });
 </script>
 <template>
-  <div class="p-2 rounded-2xl  mt-2 overflow-hidden transition-all duration-150" :class="[flowItem.isItemActive ? 'bg-white bg-opacity-50 ':'bg-black bg-opacity-10', uiStore.focusedItemId === flowItem.id ? 'border-2 border-blue-500':'border border-gray-300']" @click.stop="uiStore.setFocusedItemId(flowItem.id)" >
+  <div class="p-2 rounded-2xl  mb-2 overflow-hidden transition-all duration-150" :class="[flowItem.isItemActive ? 'bg-white bg-opacity-50 ':'bg-black bg-opacity-10', uiStore.focusedItemId === flowItem.id ? 'border-2 border-blue-500':'border border-gray-300']" @click.stop="uiStore.setFocusedItemId(flowItem.id)" >
     <AtomsCommonDynamicSizeWrapper :id-name="'dynmcwrpr_' + flowItem.id">
       <div v-if="flowItem" class="w-full">
         <div class="flex items-center justify-center mb-4">
@@ -83,7 +83,7 @@
         </div>
         <AtomsCommonModalButton class="mt-4 " >
           <template v-slot:button>
-            <button class="rounded-xl border-[#842ff7] border hover:bg-[#842ff7] hover:text-white px-3 py-1 transition duration-100 ">
+            <button class="rounded-xl border-[#842ff7] border hover:bg-[#842ff7] hover:text-white px-3 py-1 transition duration-100 mb-2">
               <font-awesome-icon :icon="['fas', 'plus']" class="" />
               子アイテムを追加
             </button>

@@ -52,7 +52,7 @@
 
                   <!-- 保存ボタン -->
                   <div class="w-full">
-                    <MoleculesHeaderButtonSaveAs />
+                    <MoleculesHeaderButtonSaveAs :flow-item="flowStore.masterFlow" />
                   </div>
 
                   <!-- インポート/エクスポートボタン -->

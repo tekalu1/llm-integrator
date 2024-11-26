@@ -17,7 +17,8 @@ export const useFlowStore = defineStore('flowStore', {
       variables: {},
       executionResults: [],
       flowItems: [],
-    } as FlowItem
+    } as FlowItem,
+    history : []
   }),
   actions: {
     addFlowItem(
@@ -136,7 +137,7 @@ export const useFlowStore = defineStore('flowStore', {
         console.error('Failed to load saved flows:', e);
       }
     },
-    saveFlow(flowItem: FlowItem) {
+    saveFlow(flowItem: FlowItem, isSaveAs = false) {
       const savedflowItem: SavedFlowItem = {
         id: uuidv4(),
         flowItem: flowItem,
@@ -144,11 +145,11 @@ export const useFlowStore = defineStore('flowStore', {
         updatedAt: Date.now()
       }
 
-      if(this.uuuidOfLoadedSavedFlow !== ''){
+      if(isSaveAs || this.uuuidOfLoadedSavedFlow === ''){
+        this.savedFlowItems.push(savedflowItem)
+      }else{
         const existingIndex = this.savedFlowItems.findIndex((item: SavedFlowItem) => item.id === this.uuuidOfLoadedSavedFlow);
         this.savedFlowItems[existingIndex] = savedflowItem
-      }else{
-        this.savedFlowItems.push(savedflowItem)
       }
       localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
       this.uuuidOfLoadedSavedFlow = savedflowItem.id;
@@ -233,15 +234,28 @@ export const useFlowStore = defineStore('flowStore', {
     },
     evaluateCondition(condition: Condition): boolean {
       const evaluateValue = (value: string | Condition | number | boolean): any => {
-          if (typeof value === 'object' && 'comparisonOperator' in value) {
+          if (typeof value === 'object') {
               // If the value is a nested Condition, evaluate it recursively
               return this.evaluateCondition(value);
           }
           return value;
       };
   
-      const left = this.applyFlowVariablesOnString(evaluateValue(condition.leftSide),this.masterFlow);
-      const right = this.applyFlowVariablesOnString(evaluateValue(condition.rightSide),this.masterFlow);
+      let left: boolean | string | number = ''
+      if(typeof condition.leftSide === 'string'){
+        left = this.applyFlowVariablesOnString(evaluateValue(condition.leftSide),this.masterFlow);
+      }else{
+        left = evaluateValue(condition.leftSide)
+      }
+      let right: boolean | string | number = ''
+      if(typeof condition.rightSide === 'string'){
+        right = this.applyFlowVariablesOnString(evaluateValue(condition.rightSide),this.masterFlow);
+      }else{
+        right = evaluateValue(condition.rightSide)
+      }
+      console.log("left : " + left)
+      console.log("left type : " + typeof left)
+      console.log("right : " + right)
   
       switch (condition.comparisonOperator) {
           case '=':
@@ -268,6 +282,29 @@ export const useFlowStore = defineStore('flowStore', {
           default:
               throw new Error(`Unsupported operator: ${condition.comparisonOperator}`);
       }
+    },
+    setupWatcher() {
+      watch(
+        () => this.masterFlow,
+        (newValue, oldValue) => {
+          this.handleFlowChange(newValue, oldValue)
+        },
+        {
+          deep: true,
+          immediate: true
+        }
+      )
+    },
+    handleFlowChange(newValue: FlowItem, oldValue: FlowItem) {
+      // console.log('masterFlowの変更を検知:', {
+      //   new: newValue,
+      //   old: oldValue
+      // })
+      // 変更時の処理を実装
+      if(this.history.length === 0){
+        this.history.push(this.masterFlow)
+      }
+      this.history.push(newValue)
     }
   }
 });
