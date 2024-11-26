@@ -17,7 +17,7 @@
                 <OrganismsFlowItem :flow-item="flowItem" class=" w-full " />
               </div>
           </AtomsCommonCoolScrollBarContainer>
-          <div class="absolute bottom-0 left-0 w-full flex items-center justify-center">
+          <div class="absolute bottom-0 left-0 w-full flex items-center justify-center pointer-events-none">
             <OrganismsCommander />
           </div>
         </div>

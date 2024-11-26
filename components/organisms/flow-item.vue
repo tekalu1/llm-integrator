@@ -27,7 +27,7 @@
           </div>
           <!-- 実行ボタン -->
           <div class="pr-2 py-1 flex items-center justify-center h-full">
-            <button @click="APIExecution.runFlow(flowItem); uiStore.setItemDisplayMode(flowItem.id, 'result') "  :class="flowItem.isItemActive ? '':'pointer-events-none opacity-40'" class="group overflow-hidden hover:bg-white rounded-xl transition-all duration-300 px-2 flex flex-col items-center justify-center">
+            <button @click="APIExecution.runFlow(flowItem); uiStore.setItemDisplayMode(flowItem, 'result') "  :class="flowItem.isItemActive ? '':'pointer-events-none opacity-40'" class="group overflow-hidden hover:bg-white rounded-xl transition-all duration-300 px-2 flex flex-col items-center justify-center">
               <div class="flex items-center justify-center">
                 <img src="~/assets/play.svg" class="w-8" />
                 <div class="mr-4">
@@ -51,27 +51,27 @@
 
         </div>
         
-        <div  v-if="flowItem.type === 'api'" class="flex w-full justify-start items-center mb-4 px-2">
-          <button v-if="flowItem.type === 'api'" @click="uiStore.setItemDisplayMode(flowItem.id,'request')" class="mr-4 flex flex-col items-center justify-center">
+        <div class="flex w-full justify-start items-center mb-4 px-2">
+          <button @click="uiStore.setItemDisplayMode(flowItem,'default')" class="mr-4 flex flex-col items-center justify-center">
             <p>
               リクエスト
             </p>
-            <div :class="uiStore.getItemDisplayMode(flowItem.id) == 'request' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
+            <div :class="uiStore.getItemDisplayMode(flowItem) == 'default' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
 
             </div>
           </button>
-          <button v-if="flowItem.type === 'api'" @click="uiStore.setItemDisplayMode(flowItem.id,'script')" class="mr-4 flex flex-col items-center justify-center">
+          <button @click="uiStore.setItemDisplayMode(flowItem,'script')" class="mr-4 flex flex-col items-center justify-center">
             <p>
               スクリプト
             </p>
-            <div :class="uiStore.getItemDisplayMode(flowItem.id) == 'script' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
+            <div :class="uiStore.getItemDisplayMode(flowItem) == 'script' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
             </div>
           </button>
-          <button v-if="flowItem.type === 'api'" @click="uiStore.setItemDisplayMode(flowItem.id,'result')" class="mr-4 flex flex-col items-center justify-center ">
+          <button @click="uiStore.setItemDisplayMode(flowItem,'result')" class="mr-4 flex flex-col items-center justify-center ">
             <p>
               実行結果
             </p>
-            <div :class="uiStore.getItemDisplayMode(flowItem.id) == 'result' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
+            <div :class="uiStore.getItemDisplayMode(flowItem) == 'result' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
             </div>
           </button>
         </div>

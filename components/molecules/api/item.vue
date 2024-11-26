@@ -1,5 +1,5 @@
 <template>
-    <div v-if="uiStore.getItemDisplayMode(apiItem.id) === 'request'">
+    <div v-if="uiStore.getItemDisplayMode(apiItem) === 'default'">
       <div class="flex items-center justify-start my-2 w-full  rounded-lg border overflow-hidden">
         <div class="border-r border-gray-200">
           <select
@@ -29,7 +29,7 @@
       <MoleculesApiFormEditor v-if="uiStore.getEditModeStatus(apiItem.id) === 'form'" :api-item="apiItem" />
       <MoleculesApiCodeEditor v-else-if="uiStore.getEditModeStatus(apiItem.id) === 'code'" :api-item="apiItem" />
     </div>
-    <div v-else-if="uiStore.getItemDisplayMode(apiItem.id) === 'script'" class="flex flex-col items-start justify-start">
+    <div v-else-if="uiStore.getItemDisplayMode(apiItem) === 'script'" class="flex flex-col items-start justify-start">
       <label class="inline-flex items-center cursor-pointer p-1">
         <input type="checkbox" v-model="apiItem.isScriptEnabled" class="sr-only peer">
         <div class="relative w-11 h-6 bg-gray-200 outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#842ff7] hover:ring-1 hover:ring-[#842ff7] transition-all duration-300"></div>
@@ -48,7 +48,7 @@
         <MonacoEditor v-model="apiItem.script" lang="json" class="h-72 w-full" />
       </div>
     </div>
-    <div v-if="uiStore.getItemDisplayMode(apiItem.id) === 'result'"  class="w-full">
+    <div v-if="uiStore.getItemDisplayMode(apiItem) === 'result'"  class="w-full">
       
       <div v-if="APIExecution.isExecuting" class="flex items-center justify-center p-4">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500">

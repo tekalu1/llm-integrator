@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { type ExecutionResult, type FlowItem } from '@/types/flow';
 
 export const useUiStore = defineStore('uiStore', {
   state: () => ({
@@ -22,14 +23,19 @@ export const useUiStore = defineStore('uiStore', {
     setEditModeStatus(flowId: string, editModeStatus: string): void{
       this.editMode[flowId] = editModeStatus
     },
-    getItemDisplayMode(flowId: string): string{
-      if(!this.itemDisplayMode[flowId]){
-        this.itemDisplayMode[flowId] = 'request'
+    getItemDisplayMode(flowItem: FlowItem): string{
+      if(!this.itemDisplayMode[flowItem.id]){
+        this.setItemDisplayMode(flowItem, 'default')
       }
-      return this.itemDisplayMode[flowId]
+      return this.itemDisplayMode[flowItem.id]
     },
-    setItemDisplayMode(flowId: string, itemDisplayMode: string): void{
-      this.itemDisplayMode[flowId] = itemDisplayMode
+    setItemDisplayMode(flowItem: FlowItem, itemDisplayMode: string): void{
+      this.itemDisplayMode[flowItem.id] = itemDisplayMode
+      if(flowItem.flowItems.length > 0){
+        flowItem.flowItems.forEach((flowItemChild) => {
+          this.setItemDisplayMode(flowItemChild, itemDisplayMode)
+        })
+      }
     },
     setFocusedItemId(flowId: string): void{
       this.focusedItemId = flowId
