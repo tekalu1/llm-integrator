@@ -12,7 +12,7 @@
           <template v-slot:button>
             <button class="rounded-xl border-[#842ff7] border hover:bg-[#842ff7] hover:text-white mb-2 px-3 py-1 transition duration-100 ">
               <font-awesome-icon :icon="['fas', 'plus']" class="" />
-              子アイテムを追加
+              アイテムを追加
             </button>
           </template>
           <template v-slot:modal>

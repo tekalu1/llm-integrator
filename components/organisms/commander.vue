@@ -45,7 +45,7 @@
           >
             <font-awesome-icon :icon="['fas', 'plus']" />
             <span>
-              子アイテムを追加
+              アイテムを追加
             </span>
           </button>
         </template>
