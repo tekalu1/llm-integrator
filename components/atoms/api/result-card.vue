@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type ExecutionResult } from '@/types/flow';
+  import { type ExecutionResult } from '~/types/item/flow';
   const uiStore = useUiStore();
   const APIExecution = useAPIExecution();
   const props = defineProps({

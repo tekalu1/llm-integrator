@@ -7,6 +7,9 @@ const props = defineProps({
   },
 });
 
+import { v4 as uuidv4 } from 'uuid';
+
+const id = ref(uuidv4())
 const isOpening = ref(false)
 const changeOpeningStatus = () => {
   isOpening.value = !isOpening.value;
@@ -22,7 +25,7 @@ defineExpose({
       <div @click="changeOpeningStatus">
         <slot name="summary" />
       </div>
-      <AtomsCommonDynamicSizeWrapper :id-name="idName" >
+      <AtomsCommonDynamicSizeWrapper :id-name="'acd-' + id" >
         <div :class="!isOpening ? 'h-0' : 'h-fit'" class="w-full">
           <slot name="detail"  />
 

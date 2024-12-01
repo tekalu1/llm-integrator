@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { type FlowItem } from '@/types/flow';
+    import { type FlowItem } from '~/types/item/flow';
     const props = defineProps({
         flowItem: {
         type: Object as PropType<FlowItem>,

@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type ExecutionResult, type FlowItem } from '@/types/flow';
-import { type ApiItem } from '@/types/api';
-import { type ConditionItem, type Condition } from '@/types/condition';
+import { type ExecutionResult, type FlowItem } from '~/types/item/flow';
+import { type ApiItem } from '~/types/item/api';
+import { type ConditionItem, type Condition } from '~/types/item/condition';
+import { type ScriptItem } from '~/types/item/script';
 
 export const useAPIExecution = defineStore('APIExecution', {
   state: () => ({
@@ -30,13 +31,22 @@ export const useAPIExecution = defineStore('APIExecution', {
         }
       }
     },
-    executeScript(apiItem: ApiItem) {
+    executeScriptApiItem(apiItem: ApiItem) {
       const flowStore = useFlowStore();
       try {
         const func = new Function('variables', 'result', apiItem.script);
         if(apiItem.isScriptEnabled && apiItem.executionResults.length > 0){
           func(flowStore.masterFlow.variables,apiItem.executionResults.slice(-1)[0]); // オブジェクトをスクリプトで操作
         }
+      } catch (error) {
+        console.error('スクリプト実行エラー:', error);
+      }
+    },
+    executeScript(scriptItem: ScriptItem) {
+      const flowStore = useFlowStore();
+      try {
+        const func = new Function('variables', scriptItem.script);
+        func(flowStore.masterFlow.variables); // オブジェクトをスクリプトで操作
       } catch (error) {
         console.error('スクリプト実行エラー:', error);
       }
@@ -124,6 +134,9 @@ export const useAPIExecution = defineStore('APIExecution', {
       if(!flowItem.isItemActive){
         return
       }
+      if(!this.isExecuting){
+        return
+      }
       try {
         if(flowItem.type === 'condition'){
           if(!flowStore.evaluateCondition(flowItem.condition)){
@@ -147,24 +160,41 @@ export const useAPIExecution = defineStore('APIExecution', {
               duration: Date.now() - startTime
             } 
             flowItem.executionResults.push(executionResult)
-            this.executeScript(flowItem)
+            this.executeScriptApiItem(flowItem)
           }
           console.log("result : ")
           console.log(result)
+          console.log(result.result.success)
           if (!result.result.success) {
               // error.value = `ステップ ${step.id} でエラーが発生しました: ${result.error}`;
               throw new Error(`ステップ ${flowItem.id} でエラーが発生しました: ${result.error}`);
           }
+        }
+        
+        if(flowItem.type === 'script'){
+          this.executeScript(flowItem)
         }
         if(flowItem.flowItems.length > 0){
           for (const item of flowItem.flowItems) {
             await this.callApi(item); // 次のステップを実行
           }
         }
+        if(flowItem.type === 'loop'){
+          if(flowItem.loopType === 'while' && !flowStore.evaluateCondition(flowItem.condition)){
+            this.callApi(flowItem)
+          }
+        }
+        if(flowItem.type === 'end'){
+          this.isExecuting = false
+        }
       } catch (e: any) {
           // error.value = `予期しないエラーが発生しました: ${e.message}`;
-          console.log(e.message)
+          console.log("error : " + e.message)
+          throw e;
       }
+    },
+    stopFlow () {
+      this.isExecuting = false;
     }
   }
 });

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type ExecutionResult, type FlowItem } from '@/types/flow';
+import { type ExecutionResult, type FlowItem } from '~/types/item/flow';
 
 export const useUiStore = defineStore('uiStore', {
   state: () => ({

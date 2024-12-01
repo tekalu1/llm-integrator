@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type FlowItem, type SavedFlowItem } from '@/types/flow';
-import { type ApiItem } from '@/types/api';
-import { type ConditionItem, type Condition } from '@/types/condition';
+import { type FlowItem, type SavedFlowItem } from '~/types/item/flow';
+import { type ApiItem } from '~/types/item/api';
+import { type ConditionItem, type Condition, type ConditionValueType, type ConditionValue } from '~/types/item/condition';
 
 export const useFlowStore = defineStore('flowStore', {
   state: () => ({
@@ -86,9 +86,15 @@ export const useFlowStore = defineStore('flowStore', {
         flowItems: [],
         condition: {
           id: uuidv4(),
-          leftSide: '',
+          leftSide: {
+            value: '',
+            valueType: 'string'
+          },
           comparisonOperator: '=',
-          rightSide: ''
+          rightSide: {
+            value: '',
+            valueType: 'string'
+          }
         } as Condition
       } as ConditionItem
     )
@@ -124,11 +130,15 @@ export const useFlowStore = defineStore('flowStore', {
     applyFlowVariablesOnString(text: string, flowItem: FlowItem): string {
       // 変数のキーを ${variableName} の形式で取得し展開
       let result = text
-      for(let key in this.masterFlow.variables){
-        result = result.replace("{{" + key + "}}",this.masterFlow.variables[key])
+      try{
+        for(let key in this.masterFlow.variables){
+          result = result.replace("{{" + key + "}}",this.masterFlow.variables[key])
+        }
+  
+        return result.replace(/\n/g, "\\n")
+      }catch{
+        return result
       }
-
-      return result.replace(/\n/g, "\\n")
     },
     loadFlows(){
       try{
@@ -205,17 +215,40 @@ export const useFlowStore = defineStore('flowStore', {
         apiItem.body.splice(index, 1);
       }
     },
-    changeConditionType(condition: Condition, type: 'condition'|'string'|'number'|'boolean', direction: 'left'|'right' ) {
-      let value: string | Condition | number | boolean;
+    changeConditionType(condition: Condition, type: ConditionValueType, direction: 'left'|'right' ) {
+      let value: ConditionValue
 
       if (type == 'condition') {
-        value = { id:uuidv4(), leftSide: '', comparisonOperator: '=', rightSide: '' }
+        value = { 
+          value: {
+            id: uuidv4(), 
+            leftSide: {
+              value: '',
+              valueType: 'string'
+            }, 
+            comparisonOperator: '=', 
+            rightSide: {
+              value: '',
+              valueType: 'string'
+            }
+          } as Condition,
+          valueType: 'condition'
+        } as ConditionValue
       }else if(type == 'string'){
-        value = ''
+        value = {
+          value: '',
+          valueType: 'string'
+        }
       }else if(type == 'number'){
-        value = 0
+        value = {
+          value: '0',
+          valueType: 'number'
+        }
       }else{
-        value = true
+        value = {
+          value: 'true',
+          valueType: 'boolean'
+        }
       }
 
       if(direction == 'left'){
@@ -227,58 +260,76 @@ export const useFlowStore = defineStore('flowStore', {
     resetCondition(condition: Condition) {
       if (condition) {
         condition.id = uuidv4()
-        condition.leftSide = ''
+        condition.leftSide = {
+          value: '',
+          valueType: 'string'
+        }
         condition.comparisonOperator = '='
-        condition.rightSide = '' 
+        condition.rightSide = {
+          value: '',
+          valueType: 'string'
+        }
       }
     },
     evaluateCondition(condition: Condition): boolean {
-      const evaluateValue = (value: string | Condition | number | boolean): any => {
-          if (typeof value === 'object') {
-              // If the value is a nested Condition, evaluate it recursively
-              return this.evaluateCondition(value);
-          }
-          return value;
+      const toBoolean = (booleanStr: string): boolean => {
+        // "true"文字列と比較した結果を返す
+        // 念のため小文字化しておく
+        return booleanStr.toLowerCase() === "true";
+      };
+      
+      const evaluateValue = (value: ConditionValue): ConditionValue => {
+        if (value.valueType === 'condition') {
+          // If the value is a nested Condition, evaluate it recursively
+          return {
+            value: this.evaluateCondition(value.value).toString(),
+            valueType: 'boolean'
+          } as ConditionValue;
+        }
+        return {
+          value: this.applyFlowVariablesOnString(value.value,this.masterFlow),
+          valueType: value.valueType
+        } as ConditionValue;
       };
   
-      let left: boolean | string | number = ''
-      if(typeof condition.leftSide === 'string'){
-        left = this.applyFlowVariablesOnString(evaluateValue(condition.leftSide),this.masterFlow);
-      }else{
-        left = evaluateValue(condition.leftSide)
-      }
-      let right: boolean | string | number = ''
-      if(typeof condition.rightSide === 'string'){
-        right = this.applyFlowVariablesOnString(evaluateValue(condition.rightSide),this.masterFlow);
-      }else{
-        right = evaluateValue(condition.rightSide)
-      }
-      console.log("left : " + left)
-      console.log("left type : " + typeof left)
-      console.log("right : " + right)
+      let left: ConditionValue = evaluateValue(condition.leftSide)
+
+      let right: ConditionValue = evaluateValue(condition.rightSide)
   
       switch (condition.comparisonOperator) {
           case '=':
-              return left === right;
+            return left.value === right.value;
           case '!=':
-              return left !== right;
+            return left.value !== right.value;
           case '<':
-              return left < right;
+            if(left.valueType !== 'number' || right.valueType !== 'number'){
+              throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
+            }
+            return left.value < right.value;
           case '>':
-              return left > right;
+            if(left.valueType !== 'number' || right.valueType !== 'number'){
+              throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
+            }
+            return left.value > right.value;
           case '<=':
-              return left <= right;
+            if(left.valueType !== 'number' || right.valueType !== 'number'){
+              throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
+            }
+            return left.value <= right.value;
           case '>=':
-              return left >= right;
+            if(left.valueType !== 'number' || right.valueType !== 'number'){
+              throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
+            }
+            return left.value >= right.value;
           case 'contain':
-              if (typeof left === 'string' && typeof right === 'string') {
-                  return left.includes(right);
+              if (typeof left.value === 'string' && typeof right.value === 'string') {
+                  return left.value.includes(right.value);
               }
-              throw new Error(`Invalid types for 'contain' operator: ${typeof left} and ${typeof right}`);
+              throw new Error(`Invalid types for 'contain' operator: ${typeof left.value} and ${typeof right.value}`);
           case '&':
-              return Boolean(left) && Boolean(right);
+              return Boolean(left.value) && Boolean(right.value);
           case '|':
-              return Boolean(left) || Boolean(right);
+              return Boolean(left.value) || Boolean(right.value);
           default:
               throw new Error(`Unsupported operator: ${condition.comparisonOperator}`);
       }

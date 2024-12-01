@@ -2,7 +2,7 @@
   const flowStore = useFlowStore();
   const uiStore = useUiStore();
   const APIExecution = useAPIExecution();
-  import { type FlowItem } from '@/types/flow';
+  import { type FlowItem } from '~/types/item/flow';
 
   const props = defineProps({
     flowItem: {
@@ -80,6 +80,15 @@
         </div>
         <div v-if="flowItem.type == 'condition'">
           <MoleculesConditionItem :condition-item="flowItem" />
+        </div>
+        <div v-if="flowItem.type == 'loop'">
+          <MoleculesLoopItem :loop-item="flowItem" />
+        </div>
+        <div v-if="flowItem.type == 'script'">
+          <MoleculesScriptItem :script-item="flowItem" />
+        </div>
+        <div v-if="flowItem.type == 'end'">
+          <MoleculesEndItem :end-item="flowItem" />
         </div>
         <AtomsCommonModalButton class="mt-4 " >
           <template v-slot:button>

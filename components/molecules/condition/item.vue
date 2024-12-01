@@ -1,11 +1,11 @@
 <template>
-  <div class="flex flex-col items-center justify-start my-2  rounded-lg border overflow-hidden">
+  <div class="flex flex-col items-center justify-start my-2  rounded-lg">
     <MoleculesCondition :condition="conditionItem.condition" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { type ConditionItem } from '@/types/condition';
+  import { type ConditionItem } from '~/types/item/condition';
   const uiStore = useUiStore();
   const APIExecution = useAPIExecution();
   const flowStore = useFlowStore();

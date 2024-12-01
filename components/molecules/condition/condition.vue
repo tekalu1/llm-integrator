@@ -2,15 +2,18 @@
   <div class="flex flex-col items-start justify-start my-2 w-full  overflow-hidden bg-white bg-opacity-50 border-gray-300 border rounded-2xl p-1">
     <!-- leftSide -->
     <div class="flex justify-center items-center bg-white bg-opacity-50 border-gray-300 border rounded-xl px-2 py-1 mb-2">
-      <div v-if="typeof condition.leftSide === 'object'">
-        <MoleculesCondition :condition="condition.leftSide" />
+      <div v-if="condition.leftSide.valueType === 'condition'">
+        <MoleculesCondition :condition="condition.leftSide.value" />
       </div>
       <div v-else>
-        <input v-model="condition.leftSide" class="outline-none" placeholder="値を入力してください" />
+        <input v-model="condition.leftSide.value" class="outline-none" placeholder="値を入力してください" />
       </div>
       <AtomsCommonModalButton >
         <template v-slot:button >
-          <button class=" hover:bg-gray-400 px-[6px] py-1 rounded-md transition-all duration-150">
+          <button class=" hover:bg-gray-400 px-[6px] py-1 rounded-md transition-all duration-150 flex items-center justify-center">
+            <p class="mr-1">
+              {{ condition.leftSide.valueType }}
+            </p>
             <font-awesome-icon :icon="['fas', 'chevron-down']" />
           </button>
         </template>
@@ -54,15 +57,18 @@
     <!-- rightSide -->
      
     <div class="flex justify-center items-center bg-white bg-opacity-50 border-gray-300 border rounded-xl px-2 py-1">
-      <div v-if="typeof condition.rightSide === 'object'">
-        <MoleculesCondition :condition="condition.rightSide" />
+      <div v-if="condition.rightSide.valueType === 'condition'">
+        <MoleculesCondition :condition="condition.rightSide.value" />
       </div>
       <div v-else>
-        <input v-model="condition.rightSide" class="outline-none" placeholder="値を入力してください" />
+        <input v-model="condition.rightSide.value" class="outline-none" placeholder="値を入力してください" />
       </div>
       <AtomsCommonModalButton >
         <template v-slot:button >
-          <button class=" hover:bg-gray-400 px-[6px] py-1 rounded-md transition-all duration-150">
+          <button class=" hover:bg-gray-400 px-[6px] py-1 rounded-md transition-all duration-150 flex items-center justify-center">
+            <p class="mr-1">
+              {{ condition.rightSide.valueType }}
+            </p>
             <font-awesome-icon :icon="['fas', 'chevron-down']" />
           </button>
         </template>
@@ -96,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-  import { type Condition } from '@/types/condition';
+  import { type Condition } from '~/types/item/condition';
   const operators = ref([
     '&','|','=','!=','<','>','>=','<=','contain'
   ])

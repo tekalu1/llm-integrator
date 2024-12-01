@@ -40,7 +40,7 @@
 
         </div>
         <div class="flex flex-col items-start justify-start" >
-          <button @click="APIExecution.executeScript(apiItem)" class=" hover:bg-gray-200 px-2 rounded-md transition-all duration-150 mb-4" >
+          <button @click="APIExecution.executeScriptApiItem(apiItem)" class=" hover:bg-gray-200 px-2 rounded-md transition-all duration-150 mb-4" >
             <font-awesome-icon :icon="['fas', 'play']" />
             テスト実行
           </button>
@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-  import { type ApiItem } from '@/types/api';
+  import { type ApiItem } from '~/types/item/api';
   const uiStore = useUiStore();
   const APIExecution = useAPIExecution();
   const props = defineProps({

@@ -1,4 +1,4 @@
-import { type FlowItem } from '@/types/flow';
+import { type FlowItem } from '~/types/item/flow';
 
 export type ApiItem = FlowItem & {
     endpoint: string;
