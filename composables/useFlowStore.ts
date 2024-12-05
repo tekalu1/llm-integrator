@@ -8,6 +8,7 @@ export const useFlowStore = defineStore('flowStore', {
   state: () => ({
     savedFlowItems: [] as SavedFlowItem[],
     uuuidOfLoadedSavedFlow: '' as string,
+    historyIndex: -1 as number,
     masterFlow : {
       id: uuidv4(),
       name: "",
@@ -18,7 +19,7 @@ export const useFlowStore = defineStore('flowStore', {
       executionResults: [],
       flowItems: [],
     } as FlowItem,
-    history : []
+    histories : [] as FlowItem[]
   }),
   actions: {
     addFlowItem(
@@ -182,7 +183,12 @@ export const useFlowStore = defineStore('flowStore', {
       this.uuuidOfLoadedSavedFlow = savedFlowItem.id
     },
     importFlow(flowItem: FlowItem) {
-      this.masterFlow = flowItem
+      try{
+        this.masterFlow = JSON.parse(JSON.stringify(flowItem))
+        console.log(JSON.stringify(this.masterFlow))
+      }catch(e){
+        console.error(e)
+      }
     },
     exportFlow(flowItem: FlowItem){
       const blob = new Blob([JSON.stringify(flowItem, null, 2)], { type: 'application/json' });
@@ -352,10 +358,31 @@ export const useFlowStore = defineStore('flowStore', {
       //   old: oldValue
       // })
       // 変更時の処理を実装
-      if(this.history.length === 0){
-        this.history.push(this.masterFlow)
+      if(this.histories.length === 0){
+        this.histories.push(JSON.parse(JSON.stringify(this.masterFlow)))
       }
-      this.history.push(newValue)
+      // if(JSON.stringify(newValue) !== JSON.stringify(this.histories[this.histories.length - 1])){
+        this.histories.push(JSON.parse(JSON.stringify(newValue)))
+        this.historyIndex = -1
+      // }
+    },
+    undoHistory() {
+      if(this.historyIndex === -1){
+        this.historyIndex = this.histories.length - 2
+      }else{
+        this.historyIndex -= 1
+      }
+      this.masterFlow = JSON.parse(JSON.stringify(this.histories[this.historyIndex]))
+    },
+    redoHistory() {
+      if(this.historyIndex === -1){
+        return
+      }else if(this.historyIndex >= this.histories.length - 1){
+        return
+      }else{
+        this.historyIndex += 1
+        this.masterFlow = JSON.parse(JSON.stringify(this.histories[this.historyIndex]))
+      }
     }
   }
 });

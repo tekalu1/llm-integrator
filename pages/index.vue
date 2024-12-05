@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-items-center h-screen w-full bg-gray-200 text-sm">
+  <div class="flex flex-col items-center justify-items-center h-screen w-full bg-gray-200 text-sm" @keydown="onKeyDown">
     <OrganismsHeader />
     <!-- <div class="fixed h-64" >
       {{ flowStore.history }}
@@ -24,13 +24,25 @@
 
       </div>
     </div>
-
+    <!-- {{ JSON.stringify(flowStore.history) }} -->
   </div>
 </template>
   
 <script setup lang="ts">
   const flowStore = useFlowStore();
   flowStore.setupWatcher()
+
+  // const onKeyDown = (event) => {
+  //   console.log('keydown')
+  //   if (event.ctrlKey && event.key === 'z') {
+  //     console.log('z')
+  //     event.preventDefault(); // デフォルトのアンドゥ動作を無効化
+  //     flowStore.undoHistory();
+  //   }else if (event.ctrlKey && event.key === 'y') {
+  //     event.preventDefault(); // デフォルトのアンドゥ動作を無効化
+  //     flowStore.redoHistory();
+  //   }
+  // }
 
   onMounted(() => {
     flowStore.loadFlows()
