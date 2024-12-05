@@ -35,7 +35,7 @@ export const useAPIExecution = defineStore('APIExecution', {
       const flowStore = useFlowStore();
       try {
         const func = new Function('variables', 'result', apiItem.script);
-        if(apiItem.isScriptEnabled && apiItem.executionResults.length > 0){
+        if(apiItem.isScriptEnabled){
           func(flowStore.masterFlow.variables,apiItem.executionResults.slice(-1)[0]); // オブジェクトをスクリプトで操作
         }
       } catch (error) {

@@ -45,7 +45,7 @@
             テスト実行
           </button>
         </div>
-        <MonacoEditor v-model="apiItem.script" lang="json" class="h-72 w-full" />
+        <MonacoEditor v-model="apiItem.script" lang="typescript" :options="{ scrollbar: {alwaysConsumeMouseWheel: false} }" class="h-72 w-full" />
       </div>
     </div>
     <div v-if="uiStore.getItemDisplayMode(apiItem) === 'result'"  class="w-full">

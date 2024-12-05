@@ -44,9 +44,9 @@ defineExpose({
             <div class="absolute left-0 top-0 items-center w-full h-full bg-gray-500 bg-opacity-50 transition-all duration-300"
                 @click="changeVisibility">
             </div>
-            <div class="flex flex-col z-20 items-center justify-center h-full w-full">
+            <div class="flex flex-col z-20 items-center justify-center h-full w-full ">
                 <div :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor"
-                    class="flex flex-col items-center justify-center drop-shadow-lg rounded-lg md:max-h-[90%] transition-all duration-300">
+                    class="flex flex-col items-center justify-center drop-shadow-lg rounded-lg md:max-h-screen transition-all duration-300 overflow-auto">
                     <div class="flex flex-col w-full ">
                         <div class="flex justify-end w-full">
                             <font-awesome-icon class="text-sm m-2 hover:opacity-50 transition-all duration-300 cursor-pointer"

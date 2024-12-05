@@ -1,17 +1,19 @@
 <template>
     <div class="h-full">
         <div class="rounded-lg bg-white overflow-hidden py-4 mb-4">
-            <p class="px-2 ml-2 mb-2 bg-">
+            <p class="px-2 ml-2 mb-2">
                 ヘッダー
             </p>
-            <MonacoEditor" v-model="valueHeaders" @focusout="setHeadersValueToStore" lang="json" class="h-64" />
+            <div class="rounded-lg bg-white overflow-hidden py-8">
+                <MonacoEditor" v-model="valueHeaders" @focusout="setHeadersValueToStore" lang="json" :options="{ scrollbar: {alwaysConsumeMouseWheel: false} }" class="h-64" />
+            </div>
         </div>
         <div class="rounded-lg bg-white overflow-hidden py-4">
-            <p class="px-2 ml-2 mb-2 bg-">
+            <p class="px-2 ml-2 mb-2">
                 ボディ
             </p>
             <div class="rounded-lg bg-white overflow-hidden py-8">
-                <MonacoEditor v-model="valueBody" @focusout="setBodyValueToStore" lang="json" class="h-64" />
+                <MonacoEditor v-model="valueBody" @focusout="setBodyValueToStore" lang="json" :options="{ scrollbar: {alwaysConsumeMouseWheel: false} }" class="h-64" />
             </div>
         </div>
     </div>
@@ -60,5 +62,9 @@
             console.error(e.message)
         }
     }
+
+    onMounted(() => {
+
+    })
 
 </script>

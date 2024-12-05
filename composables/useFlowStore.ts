@@ -19,7 +19,8 @@ export const useFlowStore = defineStore('flowStore', {
       executionResults: [],
       flowItems: [],
     } as FlowItem,
-    histories : [] as FlowItem[]
+    histories : [] as FlowItem[],
+    isHistoryLoaded : false as boolean
   }),
   actions: {
     addFlowItem(
@@ -352,6 +353,10 @@ export const useFlowStore = defineStore('flowStore', {
         }
       )
     },
+    loadHistory(flowItem: FlowItem){
+      this.isHistoryLoaded = true
+      this.importFlow(flowItem)
+    },
     handleFlowChange(newValue: FlowItem, oldValue: FlowItem) {
       // console.log('masterFlowの変更を検知:', {
       //   new: newValue,
@@ -360,6 +365,10 @@ export const useFlowStore = defineStore('flowStore', {
       // 変更時の処理を実装
       if(this.histories.length === 0){
         this.histories.push(JSON.parse(JSON.stringify(this.masterFlow)))
+      }
+      if(this.isHistoryLoaded){
+        this.isHistoryLoaded = false
+        return
       }
       // if(JSON.stringify(newValue) !== JSON.stringify(this.histories[this.histories.length - 1])){
         this.histories.push(JSON.parse(JSON.stringify(newValue)))

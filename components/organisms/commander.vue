@@ -1,5 +1,5 @@
 <template>
-    <div class=" bg-white  border-gray-300 border  rounded-2xl py-2 px-2 flex justify-center items-center z-10 shadow-[4px_4px_24px_0px_rgb(0,0,0,0.2)] pointer-events-auto">
+    <div class=" bg-white  border-gray-300 border  rounded-2xl py-1 px-2 flex justify-center items-center z-10 shadow-[4px_4px_24px_0px_rgb(0,0,0,0.2)] pointer-events-auto">
       <button @click="APIExecution.runFlow(flowStore.masterFlow); uiStore.setItemDisplayMode(flowStore.masterFlow, 'result');" class="group overflow-hidden hover:bg-gray-100 rounded-xl transition-all duration-300 p-2 flex flex-col items-center justify-center" :class="APIExecution.isExecuting ? 'pointer-events-none text-gray-300':''">
         <div class="flex items-center justify-center px-4">
           <font-awesome-icon :icon="['fas', 'play']" class="mr-2" />
@@ -51,10 +51,12 @@
           </button>
         </template>
         <template v-slot:modal>
-          <div v-if="flowStore.histories.length > 3">
-            <button v-for="(history, index) in flowStore.histories" class="flex p-2 m-1 border" :key="history.id" @click="flowStore.importFlow(history);">
-              <p class="mr-2">{{ index + 1 }}</p>
-              <p>{{ history.name? history.name:'Untitled' }}</p>
+          <div v-if="flowStore.histories.length > 3" class="flex flex-col items-center justify-center">
+            <button v-for="(history, index) in flowStore.histories" :key="history.id" @click="flowStore.loadHistory(history);">
+              <div v-if="index > 2" class="flex  p-2 m-1 border">
+                <p class="mr-2">{{ index - 2 }}</p>
+                <p>{{ history.name? history.name:'Untitled' }}</p>
+              </div>
             </button>
           </div>
         </template>

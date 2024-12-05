@@ -8,7 +8,7 @@
             テスト実行
           </button>
         </div>
-        <MonacoEditor v-model="scriptItem.script" lang="json" class="h-72 w-full" />
+        <MonacoEditor v-model="scriptItem.script" lang="json" :options="{ scrollbar: {alwaysConsumeMouseWheel: false} }" class="h-72 w-full" />
       </div>
     </div>
   </div>

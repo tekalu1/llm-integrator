@@ -1,6 +1,9 @@
 export default defineEventHandler(async (event) => {
   const { apiItem } = await readBody(event);
 
+  let res = {}
+  let retRes = {}
+
   try {
     console.log(apiItem.id);
 
@@ -21,17 +24,20 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch(apiItem.endpoint, {
       ...requestOptions,
       onResponse({ response }) {
-        console.log(`Status Code: ${response.status}`);
+        console.log(`Status Code: ${JSON.stringify(response.status)}`);
+        res = response
       },
     });
-
-    return { success: true, data: response };
+    retRes.status = res.status
+    retRes.data = res._data
+    return { success: true, data: retRes };
 
   } catch (e: any) {
     const errorResponse = {
       success: false,
       message: e.message,
-      status: e.response
+      status: e.status,
+      response: e.response
     };
 
     return { success: false, error: errorResponse};
