@@ -51,65 +51,133 @@ export const useAPIExecution = defineStore('APIExecution', {
         console.error('スクリプト実行エラー:', error);
       }
     },
-    transformEntries(entries: any[]): any {
-      return entries.reduce((acc, entry) => {
-        if (entry.children) {
-          const transformedChildren = Array.isArray(entry.children) ? this.transformEntries(entry.children) : {};
-          if (entry.key) {
-            // keyが存在する場合、オブジェクトに追加
+    transformEntries(entries: any[], parentType: 'array'|'object'|null = null): any {
+      // entriesはreverseTransformEntriesから出た形式を想定
+      // parentTypeによって、現在構築中のオブジェクトが配列なのかオブジェクトなのかを決定する
+      let acc: any;
+  
+      if (parentType === 'array') {
+        // 親が配列なら、ここで生成するオブジェクトは基本的には配列要素をpushするための配列に
+        acc = [];
+      } else if (parentType === 'object') {
+        // 親がオブジェクトならオブジェクト開始
+        acc = {};
+      } else {
+        // トップレベルの場合、entriesを解析
+        // 全要素がkeyを持たなければ配列、
+        // 少なくとも1要素がkeyを持てばオブジェクトとみなす
+        const hasKey = entries.some(e => e.hasOwnProperty('key'));
+        acc = hasKey ? {} : [];
+      }
+  
+      for (const entry of entries) {
+        if (entry.type === 'array') {
+          // childrenを再帰的に処理
+          const transformedChildren = this.transformEntries(entry.children, 'array');
+          if (entry.hasOwnProperty('key')) {
             acc[entry.key] = transformedChildren;
           } else {
-            // keyがない場合、直接配列として追加
+            // keyがない => 親がarrayならpush、objectならどうする？
+            // 親の構造に従って格納
             if (Array.isArray(acc)) {
               acc.push(transformedChildren);
             } else {
+              // 親がオブジェクトの場合でkeyなしのarrayタイプは珍しいケース
+              // 想定外であれば、特殊処理やエラーとする
+              // ここではmergeせず、keyなし要素は配列として扱う方が自然かもしれない
+              acc = [transformedChildren]; 
+            }
+          }
+        } else if (entry.type === 'object') {
+          const transformedChildren = this.transformEntries(entry.children, 'object');
+          if (entry.hasOwnProperty('key')) {
+            acc[entry.key] = transformedChildren;
+          } else {
+            // keyなしのオブジェクト
+            if (Array.isArray(acc)) {
+              // 親が配列ならpush
+              acc.push(transformedChildren);
+            } else {
+              // 親がオブジェクトならマージ
               Object.assign(acc, transformedChildren);
             }
           }
-        } else if (entry.key) {
-          // keyが存在する場合、key: valueの形式で追加
-          acc[entry.key] = entry.value;
+        } else {
+          // プリミティブ値
+          if (entry.hasOwnProperty('key')) {
+            acc[entry.key] = entry.value;
+          } else {
+            // keyなしプリミティブ
+            if (Array.isArray(acc)) {
+              acc.push(entry.value);
+            } else {
+              // 親がオブジェクトでkeyなしプリミティブは扱いが不明瞭なケース
+              // ここでは無視するか、特殊キーで格納するなど
+              acc = entry.value; 
+            }
+          }
         }
-        return acc;
-      }, Array.isArray(entries) && entries.length && !entries[0].key ? [] : {});
+      }
+  
+      return acc;
     },
     reverseTransformEntries(obj: any): any[] {
       const entries: any[] = [];
-    
+  
       if (Array.isArray(obj)) {
-        // 配列の場合、各要素を処理
-        obj.forEach(item => {
-          entries.push({
-            type: 'array',
-            children: this.reverseTransformEntries(item)
-          });
-        });
+        // 配列の場合
+        for (const item of obj) {
+          if (Array.isArray(item)) {
+            entries.push({
+              type: 'array',
+              children: this.reverseTransformEntries(item)
+            });
+          } else if (typeof item === 'object' && item !== null) {
+            entries.push({
+              type: 'object',
+              children: this.reverseTransformEntries(item)
+            });
+          } else {
+            // プリミティブ
+            entries.push({
+              type: typeof item,
+              value: item
+            });
+          }
+        }
       } else if (typeof obj === 'object' && obj !== null) {
-        // オブジェクトの場合、キーと値を処理
-        Object.keys(obj).forEach(key => {
+        // オブジェクトの場合: keyがある
+        for (const key of Object.keys(obj)) {
           const value = obj[key];
-          if (typeof value === 'object' && value !== null) {
+          if (Array.isArray(value)) {
             entries.push({
               key: key,
-              type: Array.isArray(value) ? 'array' : 'object',
+              type: 'array',
+              children: this.reverseTransformEntries(value)
+            });
+          } else if (typeof value === 'object' && value !== null) {
+            entries.push({
+              key: key,
+              type: 'object',
               children: this.reverseTransformEntries(value)
             });
           } else {
+            // プリミティブ値
             entries.push({
               key: key,
               type: typeof value,
               value: value
             });
           }
-        });
+        }
       } else {
-        // プリミティブ値の場合
+        // プリミティブ値のみの場合
         entries.push({
           type: typeof obj,
           value: obj
         });
       }
-    
+  
       return entries;
     },
     async runFlow (flowItem: FlowItem) {

@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
       }),
     };
 
-    console.log(requestOptions);
+    console.log(JSON.stringify(requestOptions));
 
     const response = await $fetch(apiItem.endpoint, {
       ...requestOptions,
