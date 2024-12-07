@@ -341,57 +341,57 @@ export const useFlowStore = defineStore('flowStore', {
               throw new Error(`Unsupported operator: ${condition.comparisonOperator}`);
       }
     },
-    setupWatcher() {
-      watch(
-        () => this.masterFlow,
-        (newValue, oldValue) => {
-          this.handleFlowChange(newValue, oldValue)
-        },
-        {
-          deep: true,
-          immediate: true
-        }
-      )
-    },
-    loadHistory(flowItem: FlowItem){
-      this.isHistoryLoaded = true
-      this.importFlow(flowItem)
-    },
-    handleFlowChange(newValue: FlowItem, oldValue: FlowItem) {
-      // console.log('masterFlowの変更を検知:', {
-      //   new: newValue,
-      //   old: oldValue
-      // })
-      // 変更時の処理を実装
-      if(this.histories.length === 0){
-        this.histories.push(JSON.parse(JSON.stringify(this.masterFlow)))
-      }
-      if(this.isHistoryLoaded){
-        this.isHistoryLoaded = false
-        return
-      }
-      // if(JSON.stringify(newValue) !== JSON.stringify(this.histories[this.histories.length - 1])){
-        this.histories.push(JSON.parse(JSON.stringify(newValue)))
-        this.historyIndex = -1
-      // }
-    },
-    undoHistory() {
-      if(this.historyIndex === -1){
-        this.historyIndex = this.histories.length - 2
-      }else{
-        this.historyIndex -= 1
-      }
-      this.masterFlow = JSON.parse(JSON.stringify(this.histories[this.historyIndex]))
-    },
-    redoHistory() {
-      if(this.historyIndex === -1){
-        return
-      }else if(this.historyIndex >= this.histories.length - 1){
-        return
-      }else{
-        this.historyIndex += 1
-        this.masterFlow = JSON.parse(JSON.stringify(this.histories[this.historyIndex]))
-      }
-    }
+    // setupWatcher() {
+    //   watch(
+    //     () => this.masterFlow,
+    //     (newValue, oldValue) => {
+    //       this.handleFlowChange(newValue, oldValue)
+    //     },
+    //     {
+    //       deep: true,
+    //       immediate: true
+    //     }
+    //   )
+    // },
+    // loadHistory(flowItem: FlowItem){
+    //   this.isHistoryLoaded = true
+    //   this.importFlow(flowItem)
+    // },
+    // handleFlowChange(newValue: FlowItem, oldValue: FlowItem) {
+    //   // console.log('masterFlowの変更を検知:', {
+    //   //   new: newValue,
+    //   //   old: oldValue
+    //   // })
+    //   // 変更時の処理を実装
+    //   if(this.histories.length === 0){
+    //     this.histories.push(JSON.parse(JSON.stringify(this.masterFlow)))
+    //   }
+    //   if(this.isHistoryLoaded){
+    //     this.isHistoryLoaded = false
+    //     return
+    //   }
+    //   // if(JSON.stringify(newValue) !== JSON.stringify(this.histories[this.histories.length - 1])){
+    //     this.histories.push(JSON.parse(JSON.stringify(newValue)))
+    //     this.historyIndex = -1
+    //   // }
+    // },
+    // undoHistory() {
+    //   if(this.historyIndex === -1){
+    //     this.historyIndex = this.histories.length - 2
+    //   }else{
+    //     this.historyIndex -= 1
+    //   }
+    //   this.masterFlow = JSON.parse(JSON.stringify(this.histories[this.historyIndex]))
+    // },
+    // redoHistory() {
+    //   if(this.historyIndex === -1){
+    //     return
+    //   }else if(this.historyIndex >= this.histories.length - 1){
+    //     return
+    //   }else{
+    //     this.historyIndex += 1
+    //     this.masterFlow = JSON.parse(JSON.stringify(this.histories[this.historyIndex]))
+    //   }
+    // }
   }
 });

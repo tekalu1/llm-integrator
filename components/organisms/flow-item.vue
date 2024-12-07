@@ -15,7 +15,7 @@
   <div class="p-2 rounded-2xl  mb-2 overflow-hidden transition-all duration-150" :class="[flowItem.isItemActive ? 'bg-white bg-opacity-50 ':'bg-black bg-opacity-10', uiStore.focusedItemId === flowItem.id ? 'border-2 border-blue-500':'border border-gray-300']" @click.stop="uiStore.setFocusedItemId(flowItem.id)" >
     <AtomsCommonDynamicSizeWrapper :id-name="'dynmcwrpr_' + flowItem.id">
       <div v-if="flowItem" class="w-full">
-        <div class="flex items-center justify-center mb-4">
+        <div class="flex items-center justify-center">
           <AtomsCommonItemLogo :item-type="flowItem.type" :rounded="true" />
           <div class="flex items-center justify-start flex-grow">
             <input
@@ -38,13 +38,13 @@
             </button>
           </div>
           <!-- フローの有効化・無効化トグル -->
-          <label class="inline-flex items-center cursor-pointer mt-1 mr-4 p-1">
+          <label class="inline-flex items-center cursor-pointer mt-1 mr-2 p-1">
             <input type="checkbox" v-model="flowItem.isItemActive" class="sr-only peer">
             <div class="relative w-11 h-6 bg-gray-200 outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#842ff7] hover:ring-1 hover:ring-[#842ff7] transition-all duration-300"></div>
 
           </label>
           <button @click="flowStore.removeFlowItemById(flowItem.id)" class="px-2 m-1">
-            <p class=" text-red-500 hover:text-red-700 text-lg transition-all duration-200">
+            <p class=" text-red-500 text-lg hover:text-red-700 transition-all duration-200">
               <font-awesome-icon :icon="['fas', 'xmark']" />
             </p>
           </button>
@@ -56,7 +56,7 @@
             <p>
               リクエスト
             </p>
-            <div :class="uiStore.getItemDisplayMode(flowItem) == 'default' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
+            <div :class="uiStore.getItemDisplayMode(flowItem) == 'default' ? ' opacity-100' : ' opacity-0' " class="w-full h-[1px] bg-[#842ff7] rounded-md transition-all duration-500">
 
             </div>
           </button>
@@ -64,14 +64,14 @@
             <p>
               スクリプト
             </p>
-            <div :class="uiStore.getItemDisplayMode(flowItem) == 'script' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
+            <div :class="uiStore.getItemDisplayMode(flowItem) == 'script' ? ' opacity-100' : ' opacity-0' " class="w-full h-[1px] bg-[#842ff7] rounded-md transition-all duration-500">
             </div>
           </button>
           <button @click="uiStore.setItemDisplayMode(flowItem,'result')" class="mr-4 flex flex-col items-center justify-center ">
             <p>
               実行結果
             </p>
-            <div :class="uiStore.getItemDisplayMode(flowItem) == 'result' ? ' opacity-100' : ' opacity-0' " class="w-full h-[2px] bg-[#842ff7] rounded-md transition-all duration-500">
+            <div :class="uiStore.getItemDisplayMode(flowItem) == 'result' ? ' opacity-100' : ' opacity-0' " class="w-full h-[1px] bg-[#842ff7] rounded-md transition-all duration-500">
             </div>
           </button>
         </div>

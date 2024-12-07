@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-items-center h-screen w-full bg-gray-200 lg:text-sm text-xs" @keydown="onKeyDown">
+  <div class="flex flex-col items-center justify-items-center h-screen w-full bg-gray-200 text-xs" @keydown="onKeyDown">
     <OrganismsHeader />
     <!-- <div class="fixed h-64" >
       {{ flowStore.history }}
@@ -30,7 +30,7 @@
   
 <script setup lang="ts">
   const flowStore = useFlowStore();
-  flowStore.setupWatcher()
+  // flowStore.setupWatcher()
 
   // const onKeyDown = (event) => {
   //   console.log('keydown')

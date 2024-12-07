@@ -14,14 +14,14 @@
                     class="px-2 focus:bg-white duration-300 transition-all bg-transparent rounded-md border-gray-300 outline-none w-full" 
                   />
                 </div>
-                <div @click="uiStore.setFocusedItemId(flowItemChild.id)" class="hover:bg-gray-200 p-1 rounded-md transition-all duration-150  mr-2">
+                <div @click="uiStore.setFocusedItemId(flowItemChild.id)" class="hover:bg-gray-200 p-1 rounded-md transition-all duration-150  mr-1">
                   <a :href="'#dynmcwrpr_' + flowItemChild.id"  class="flex items-center justify-center" >
                     <font-awesome-icon :icon="['fas', 'arrow-right']" />
                   </a>
                 </div>
                 <AtomsCommonModalButton class="" >
                   <template v-slot:button>
-                    <button class="rounded-md mr-2 hover:bg-gray-200 px-2 transition-all duration-150 ">
+                    <button class="rounded-md mr-1 hover:bg-gray-200 px-1 transition-all duration-150 ">
                       <font-awesome-icon :icon="['fas', 'plus']" class="" />
                     </button>
                   </template>
@@ -29,7 +29,7 @@
                     <MoleculesFlowAddItemMenu :flow-item="flowItemChild" />
                   </template>
                 </AtomsCommonModalButton>
-                <button class="flex items-center justify-center mr-2 hover:bg-gray-200 p-1 rounded-md transition-all duration-150" @click="flowStore.duplicateFlowItem(flowItem,flowItemChild)">
+                <button class="flex items-center justify-center mr-1 hover:bg-gray-200 p-1 rounded-md transition-all duration-150" @click="flowStore.duplicateFlowItem(flowItem,flowItemChild)">
                   <font-awesome-icon :icon="['far', 'clone']" />
                 </button>
                 <button @click="flowStore.removeFlowItemById(flowItemChild.id)" class="flex items-center justify-center text-red-500 hover:text-red-700  mr-4 hover:bg-gray-200 p-1 rounded-md transition-all duration-150">

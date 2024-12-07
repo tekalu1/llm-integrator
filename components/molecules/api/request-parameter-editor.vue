@@ -4,12 +4,12 @@
         <input
           v-model="parameter.key"
           placeholder="キー"
-          class="col-span-3 px-2 py-1 outline-none rounded border"
+          class="col-span-3 px-2 outline-none rounded border"
         />
         
         <select
           v-model="parameter.type"
-          class="col-span-2 px-2 py-1 outline-none rounded border"
+          class="col-span-2 px-2 outline-none rounded border"
         >
           <option value="string">文字列</option>
           <option value="number">数値</option>
@@ -26,7 +26,7 @@
               <template v-if="parameter.type === 'boolean'">
                 <select
                   v-model="parameter.value"
-                  class="w-full px-2 py-1 outline-none rounded border"
+                  class="w-full px-2 outline-none rounded border"
                 >
                   <option :value="true">true</option>
                   <option :value="false">false</option>
