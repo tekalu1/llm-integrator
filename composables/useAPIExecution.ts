@@ -59,26 +59,44 @@ export const useAPIExecution = defineStore('APIExecution', {
             key: key,
             type: 'array',
             value: null,
-            children: this.transformEntriesArray(requestParameters[key], 'array'),
+            children: this.transformEntriesArray(requestParameters[key], 'array')
           })
         }else if(this.getType(requestParameters[key]) === 'object'){
           if(parentType === 'array'){
             // console.log("result before : " + result)
             // console.log("requestParameters[key] : " + requestParameters[key])
             // console.log("key : " + key)
-            result.push({
-              type: 'object',
-              value: null,
-              children: this.transformEntriesArray(requestParameters[key], 'array'),
-            })
+            if(requestParameters[key]){
+              result.push({
+                type: 'object',
+                value: null,
+                children: this.transformEntriesArray(requestParameters[key], 'array')
+              })
+            }else{
+              result.push({
+                type: 'object',
+                value: null,
+                children: []
+              })
+            }
             // console.log("result after : " + result)
           }else{
-            result.push({
-              key: key,
-              type: 'object',
-              value: null,
-              children: this.transformEntriesArray(requestParameters[key]),
-            })
+            if(requestParameters[key]){
+              result.push({
+                key: key,
+                type: 'object',
+                value: null,
+                children: this.transformEntriesArray(requestParameters[key])
+              })
+            }else{
+              result.push({
+                key: key,
+                type: 'object',
+                value: null,
+                children: []
+              })
+            }
+            
           }
         }else{
           result.push({
@@ -107,12 +125,16 @@ export const useAPIExecution = defineStore('APIExecution', {
       for (const param of params) {
         if(!param.key){
           if (param.children) {
-            result.push(this.reverseTransformToRequestParameterArray(param.children, param.type));
+            if(param.children.length > 0){
+              result.push(this.reverseTransformToRequestParameterArray(param.children, param.type));
+            }else{
+              result = null
+            }
           }else{
             if(parentType === 'array'){
               result.push(param.value)
             }else{
-              result = param.value;
+              result = param.value
             }
           }
         }else{
@@ -120,13 +142,17 @@ export const useAPIExecution = defineStore('APIExecution', {
             if(parentType === 'array'){
               result.push({[param.key]: this.reverseTransformToRequestParameterArray(param.children, param.type)});
             }else{
-              result[param.key] = this.reverseTransformToRequestParameterArray(param.children, param.type);
+              if(param.children.length > 0){
+                result[param.key] = this.reverseTransformToRequestParameterArray(param.children, param.type);
+              }else{
+                result[param.key] = null
+              }
             }
           }else{
             if(parentType === 'array'){
               result.push({[param.key]: param.value})
             }else{
-              result[param.key] = param.value;
+              result[param.key] = param.value
             }
           }
         }

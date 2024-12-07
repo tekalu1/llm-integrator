@@ -1,5 +1,6 @@
 <template>
     <div class="flex items-center justify-start">
+        {{ JSON.stringify(apiItem.headers) }}
         <p class="mr-2">
             headers
         </p>
