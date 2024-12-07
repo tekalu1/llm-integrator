@@ -84,7 +84,7 @@
   </template>
   
   <script setup lang="ts">
-  import { type RequestParameter } from '@/types/ApiItem';
+  import { type RequestParameter } from '@/types/item/api';
   const props = defineProps<{
     modelValue: RequestParameter;
   }>();

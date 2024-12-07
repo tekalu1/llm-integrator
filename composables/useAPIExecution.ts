@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { type ExecutionResult, type FlowItem } from '~/types/item/flow';
-import { type ApiItem } from '~/types/item/api';
+import { type ApiItem, type RequestParameter } from '~/types/item/api';
 import { type ConditionItem, type Condition } from '~/types/item/condition';
 import { type ScriptItem } from '~/types/item/script';
 
@@ -51,134 +51,87 @@ export const useAPIExecution = defineStore('APIExecution', {
         console.error('スクリプト実行エラー:', error);
       }
     },
-    transformEntries(entries: any[], parentType: 'array'|'object'|null = null): any {
-      // entriesはreverseTransformEntriesから出た形式を想定
-      // parentTypeによって、現在構築中のオブジェクトが配列なのかオブジェクトなのかを決定する
-      let acc: any;
-  
-      if (parentType === 'array') {
-        // 親が配列なら、ここで生成するオブジェクトは基本的には配列要素をpushするための配列に
-        acc = [];
-      } else if (parentType === 'object') {
-        // 親がオブジェクトならオブジェクト開始
-        acc = {};
-      } else {
-        // トップレベルの場合、entriesを解析
-        // 全要素がkeyを持たなければ配列、
-        // 少なくとも1要素がkeyを持てばオブジェクトとみなす
-        const hasKey = entries.some(e => e.hasOwnProperty('key'));
-        acc = hasKey ? {} : [];
-      }
-  
-      for (const entry of entries) {
-        if (entry.type === 'array') {
-          // childrenを再帰的に処理
-          const transformedChildren = this.transformEntries(entry.children, 'array');
-          if (entry.hasOwnProperty('key')) {
-            acc[entry.key] = transformedChildren;
-          } else {
-            // keyがない => 親がarrayならpush、objectならどうする？
-            // 親の構造に従って格納
-            if (Array.isArray(acc)) {
-              acc.push(transformedChildren);
-            } else {
-              // 親がオブジェクトの場合でkeyなしのarrayタイプは珍しいケース
-              // 想定外であれば、特殊処理やエラーとする
-              // ここではmergeせず、keyなし要素は配列として扱う方が自然かもしれない
-              acc = [transformedChildren]; 
-            }
+    transformEntriesArray(requestParameters: any, parentType = 'object'): RequestParameter[]{
+      let result: RequestParameter[] = []
+      for(const key of Object.keys(requestParameters)){
+        if(this.getType(requestParameters[key]) === 'array'){
+          result.push({
+            key: key,
+            type: 'array',
+            value: null,
+            children: this.transformEntriesArray(requestParameters[key], 'array'),
+          })
+        }else if(this.getType(requestParameters[key]) === 'object'){
+          if(parentType === 'array'){
+            // console.log("result before : " + result)
+            // console.log("requestParameters[key] : " + requestParameters[key])
+            // console.log("key : " + key)
+            result.push({
+              type: 'object',
+              value: null,
+              children: this.transformEntriesArray(requestParameters[key], 'array'),
+            })
+            // console.log("result after : " + result)
+          }else{
+            result.push({
+              key: key,
+              type: 'object',
+              value: null,
+              children: this.transformEntriesArray(requestParameters[key]),
+            })
           }
-        } else if (entry.type === 'object') {
-          const transformedChildren = this.transformEntries(entry.children, 'object');
-          if (entry.hasOwnProperty('key')) {
-            acc[entry.key] = transformedChildren;
-          } else {
-            // keyなしのオブジェクト
-            if (Array.isArray(acc)) {
-              // 親が配列ならpush
-              acc.push(transformedChildren);
-            } else {
-              // 親がオブジェクトならマージ
-              Object.assign(acc, transformedChildren);
-            }
-          }
-        } else {
-          // プリミティブ値
-          if (entry.hasOwnProperty('key')) {
-            acc[entry.key] = entry.value;
-          } else {
-            // keyなしプリミティブ
-            if (Array.isArray(acc)) {
-              acc.push(entry.value);
-            } else {
-              // 親がオブジェクトでkeyなしプリミティブは扱いが不明瞭なケース
-              // ここでは無視するか、特殊キーで格納するなど
-              acc = entry.value; 
-            }
-          }
+        }else{
+          result.push({
+            key: key,
+            type: this.getType(requestParameters[key]),
+            value: requestParameters[key]
+          })
         }
       }
-  
-      return acc;
+      return result
     },
-    reverseTransformEntries(obj: any): any[] {
-      const entries: any[] = [];
-  
-      if (Array.isArray(obj)) {
-        // 配列の場合
-        for (const item of obj) {
-          if (Array.isArray(item)) {
-            entries.push({
-              type: 'array',
-              children: this.reverseTransformEntries(item)
-            });
-          } else if (typeof item === 'object' && item !== null) {
-            entries.push({
-              type: 'object',
-              children: this.reverseTransformEntries(item)
-            });
-          } else {
-            // プリミティブ
-            entries.push({
-              type: typeof item,
-              value: item
-            });
-          }
+    getType(value: any): 'string' | 'number' | 'boolean' | 'object' | 'array' {
+        if (Array.isArray(value)) return 'array';
+        if (value === null) return 'object'; // nullはobject型として扱う
+        return typeof value as 'string' | 'number' | 'boolean' | 'object';
+    },
+    reverseTransformToRequestParameterArray(params: RequestParameter[], parentType = 'object'): any {
+      // console.log("called reverseTransformToRequestParameterArray")
+      let result:any = {};
+      if(parentType === 'array'){
+        if(!Array.isArray(result)){
+          result = []
         }
-      } else if (typeof obj === 'object' && obj !== null) {
-        // オブジェクトの場合: keyがある
-        for (const key of Object.keys(obj)) {
-          const value = obj[key];
-          if (Array.isArray(value)) {
-            entries.push({
-              key: key,
-              type: 'array',
-              children: this.reverseTransformEntries(value)
-            });
-          } else if (typeof value === 'object' && value !== null) {
-            entries.push({
-              key: key,
-              type: 'object',
-              children: this.reverseTransformEntries(value)
-            });
-          } else {
-            // プリミティブ値
-            entries.push({
-              key: key,
-              type: typeof value,
-              value: value
-            });
-          }
-        }
-      } else {
-        // プリミティブ値のみの場合
-        entries.push({
-          type: typeof obj,
-          value: obj
-        });
       }
-  
-      return entries;
+
+      for (const param of params) {
+        if(!param.key){
+          if (param.children) {
+            result.push(this.reverseTransformToRequestParameterArray(param.children, param.type));
+          }else{
+            if(parentType === 'array'){
+              result.push(param.value)
+            }else{
+              result = param.value;
+            }
+          }
+        }else{
+          if (param.children) {
+            if(parentType === 'array'){
+              result.push({[param.key]: this.reverseTransformToRequestParameterArray(param.children, param.type)});
+            }else{
+              result[param.key] = this.reverseTransformToRequestParameterArray(param.children, param.type);
+            }
+          }else{
+            if(parentType === 'array'){
+              result.push({[param.key]: param.value})
+            }else{
+              result[param.key] = param.value;
+            }
+          }
+        }
+      }
+      return result
     },
     async runFlow (flowItem: FlowItem) {
 
@@ -213,9 +166,9 @@ export const useAPIExecution = defineStore('APIExecution', {
         }
         if(flowItem.type === 'api'){
           let stepConverted: ApiItem = JSON.parse(JSON.stringify(flowItem))
-          stepConverted.headers = flowStore.applyFlowVariables(this.transformEntries(flowItem.headers),flowItem)
+          stepConverted.headers = flowStore.applyFlowVariables(this.reverseTransformToRequestParameterArray(flowItem.headers),flowItem)
           stepConverted.endpoint = flowStore.applyFlowVariablesOnString(flowItem.endpoint,flowItem)
-          stepConverted.body = flowStore.applyFlowVariables(this.transformEntries(flowItem.body),flowItem)
+          stepConverted.body = flowStore.applyFlowVariables(this.reverseTransformToRequestParameterArray(flowItem.body),flowItem)
           console.log(stepConverted)
           const result = await this.executeStep(stepConverted); // 個別ステップをサーバーに送信
           if (result && result.result) {

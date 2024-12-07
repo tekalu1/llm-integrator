@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts" setup>
-    import { type ApiItem } from '@/types/ApiItem';
+    import { type ApiItem } from '@/types/item/api';
     const props = defineProps({
         apiItem: {
             type: Object as PropType<ApiItem>,

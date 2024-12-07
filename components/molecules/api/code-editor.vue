@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-    import { type ApiItem } from '@/types/ApiItem';
+    import { type ApiItem } from '@/types/item/api';
     const props = defineProps({
         apiItem: {
             type: Object as PropType<ApiItem>,
@@ -42,12 +42,12 @@
         }
     };
 
-    valueHeaders.value = formatResponse(APIExecution.transformEntries(props.apiItem.headers))
-    valueBody.value = formatResponse(APIExecution.transformEntries(props.apiItem.body))
+    valueHeaders.value = formatResponse(APIExecution.reverseTransformToRequestParameterArray(props.apiItem.headers))
+    valueBody.value = formatResponse(APIExecution.reverseTransformToRequestParameterArray(props.apiItem.body))
 
     const setHeadersValueToStore = () => {
         try{
-            props.apiItem.headers = APIExecution.reverseTransformEntries(JSON.parse(valueHeaders.value))
+            props.apiItem.headers = APIExecution.transformEntriesArray(JSON.parse(valueHeaders.value))
             console.log("called setHeadersValueToStore")
         }catch(e){
             console.error(e.message)
@@ -56,7 +56,7 @@
     const setBodyValueToStore = () => {
         try{
             console.log("called setBodyValueToStore")
-            props.apiItem.body = APIExecution.reverseTransformEntries(JSON.parse(valueBody.value))
+            props.apiItem.body = APIExecution.transformEntriesArray(JSON.parse(valueBody.value))
 
         }catch(e){
             console.error(e.message)
