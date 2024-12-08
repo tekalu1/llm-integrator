@@ -74,6 +74,7 @@ export const useAPIExecution = defineStore('APIExecution', {
               })
             }else{
               result.push({
+                key: key,
                 type: 'object',
                 value: null,
                 children: []
