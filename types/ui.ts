@@ -4,3 +4,8 @@ export type RequestParameter = {
   value: any;
   children?: RequestParameter[];
 }
+
+export type IsExecutedFlow = {
+  [flowId: string]: ExecuteStatus ;
+}
+export type ExecuteStatus = 'Not yet' | 'In progress' | 'Done' ;

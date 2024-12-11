@@ -20,7 +20,7 @@
           </template>
         </AtomsCommonModalButton>
         <div class="w-full">
-          <MoleculesApiDraggableFlowList :flow-item="flowStore.masterFlow" />
+          <MoleculesSideMenuDraggableFlowList :flow-item="flowStore.masterFlow" />
         </div>
       </div>
     </AtomsCommonDynamicSizeWrapper>

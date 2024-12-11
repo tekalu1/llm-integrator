@@ -1,11 +1,21 @@
 <template>
-  <div  class="flex flex-col items-center justify-center w-full">
-    <draggable ref="el" v-model="flowItem.flowItems" :animation="150" easing="ease" group="flow" ghostClass="ghost" :swapThreshold="0.1" class=" my-1 w-full flex flex-col items-center justify-center" >
+    <draggable ref="el" v-model="flowItem.flowItems" :animation="150" easing="ease" group="flow" ghostClass="ghost" :swapThreshold="0.1" class=" my-[1px] w-full flex flex-col items-center justify-center"   >
       <template v-for=" (flowItemChild,index) in flowItem.flowItems" :key="flowItem.id" >
-          <div class="flex border bg-white bg-opacity-50 border-gray-300 rounded-lg mb-1 w-full overflow-hidden pr-1">
+        <a :href="'#dynmcwrpr_' + flowItemChild.id" class="flex w-full overflow-hidden pr-1">
+          <div class="flex  bg-white bg-opacity-50  rounded-lg mb-1 w-full overflow-hidden pr-1 transition-all duration-150" :class="uiStore.focusedItemId === flowItemChild.id ? 'border-2 border-blue-500':'border border-gray-300'"  @click.stop="uiStore.setFocusedItemId(flowItemChild.id)">
             <AtomsCommonItemLogo :item-type="flowItemChild.type" size="small" />
             <div class="flex flex-col items-start justify-center w-full ml-1">
-              <div class="flex items-center justify-center w-full pt-2">
+              <div class="flex items-center justify-center w-full pt-1">
+                <div v-if="uiStore.getIsExecutedFlow(flowItemChild.id) === 'Done'" class="flex flex-col items-center justify-center">
+                  <font-awesome-icon v-if="uiStore.getExecutionResults(flowItemChild.id)[uiStore.getExecutionResults(flowItemChild.id).length - 1]?.success" :icon="['fas', 'circle-check']" class="text-green-600" />
+                  <font-awesome-icon v-if="!uiStore.getExecutionResults(flowItemChild.id)[uiStore.getExecutionResults(flowItemChild.id).length - 1]?.success" :icon="['fas', 'circle-exclamation']" class="text-red-600" />
+                </div>
+                <div v-else-if="uiStore.getIsExecutedFlow(flowItemChild.id) === 'In progress'" class="flex flex-col items-center justify-center">
+                  <div class="flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-2 w-2 border-b-2 border-green-500">
+                    </div>
+                  </div>
+                </div>
                 <div class="flex items-center justify-start flex-grow">
                   <input
                     v-model="flowItemChild.name"
@@ -13,11 +23,6 @@
                     placeholder="Untitled"
                     class="px-2 focus:bg-white duration-300 transition-all bg-transparent rounded-md border-gray-300 outline-none w-full" 
                   />
-                </div>
-                <div @click="uiStore.setFocusedItemId(flowItemChild.id)" class="hover:bg-gray-200 p-1 rounded-md transition-all duration-150  mr-1">
-                  <a :href="'#dynmcwrpr_' + flowItemChild.id"  class="flex items-center justify-center" >
-                    <font-awesome-icon :icon="['fas', 'arrow-right']" />
-                  </a>
                 </div>
                 <AtomsCommonModalButton class="" >
                   <template v-slot:button>
@@ -36,12 +41,13 @@
                   <font-awesome-icon :icon="['fas', 'xmark']" />
                 </button>
               </div>
-              <draggable-flow-list :flow-item="flowItemChild" />
+              <MoleculesSideMenuDraggableFlowList :flow-item="flowItemChild" />
             </div>
           </div>
+
+        </a>
       </template>
     </draggable>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -52,8 +58,10 @@ import { type FlowItem } from '~/types/item/flow';
       required: true
     }
   });
+
   const uiStore = useUiStore();
   const flowStore = useFlowStore();
-  
+
+
 
 </script> 

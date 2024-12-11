@@ -1,10 +1,10 @@
 <template>
-    <div class="flex items-center justify-start">
+    <div class="flex items-center justify-start mb-2">
         <!-- {{ JSON.stringify(apiItem.headers) }} -->
         <p class="mr-2">
             headers
         </p>
-        <button @click="flowStore.addHeader(apiItem)" class="text-sm text-white aspect-square px-1 bg-[#842ff7] rounded-full flex justify-center items-center">
+        <button @click="flowStore.addHeader(apiItem)" class="text-xs text-[#842ff7] hover:bg-[#842ff7] active:bg-purple-900 hover:text-white transition-all duration-200 aspect-square px-1 border border-[#842ff7] rounded-full flex justify-center items-center">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </button>
     </div>
@@ -15,11 +15,11 @@
             </div>
         </div>
     </div>
-    <div class="flex items-center justify-start mt-4">
+    <div class="flex items-center justify-start mt-4 mb-2">
         <p class="mr-2">
             body
         </p>
-        <button @click="flowStore.addBodyParam(apiItem)" class="text-sm text-white aspect-square px-1 bg-[#842ff7] rounded-full flex justify-center items-center">
+        <button @click="flowStore.addBodyParam(apiItem)" class="text-xs text-[#842ff7] hover:bg-[#842ff7] active:bg-purple-900 hover:text-white transition-all duration-200 aspect-square px-1 border border-[#842ff7] rounded-full flex justify-center items-center">
             <font-awesome-icon :icon="['fas', 'plus']" />
         </button>
     </div>

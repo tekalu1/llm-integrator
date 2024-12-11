@@ -51,9 +51,9 @@
     <div v-if="uiStore.getItemDisplayMode(apiItem) === 'result'"  class="w-full">
       
       <div v-if="APIExecution.isExecuting" class="flex items-center justify-center p-4">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500">
-            </div>
-        </div>
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500">
+          </div>
+      </div>
       <div v-if="uiStore.getExecutionResults(apiItem.id).length > 0 ">
         <p class="font-bold mb-4">
           最新の実行

@@ -168,6 +168,7 @@ export const useAPIExecution = defineStore('APIExecution', {
       const startTime = Date.now();
   
       try {
+        uiStore.clearIsExecutedFlow()
         await this.callApi(flowItem)
         if (uiStore.executionResults[flowItem.id]) {
         } else {
@@ -188,9 +189,11 @@ export const useAPIExecution = defineStore('APIExecution', {
       if(!this.isExecuting){
         return
       }
+      uiStore.setIsExecutedFlow(flowItem.id, 'In progress')
       try {
         if(flowItem.type === 'condition'){
           if(!flowStore.evaluateCondition(flowItem.condition)){
+            uiStore.setIsExecutedFlow(flowItem.id, 'Done')
             return
           }
         }
@@ -238,9 +241,12 @@ export const useAPIExecution = defineStore('APIExecution', {
         if(flowItem.type === 'end'){
           this.isExecuting = false
         }
+        
+        uiStore.setIsExecutedFlow(flowItem.id, 'Done')
       } catch (e: any) {
           // error.value = `予期しないエラーが発生しました: ${e.message}`;
           console.log("error : " + e.message)
+          uiStore.setIsExecutedFlow(flowItem.id, 'Done')
           throw e;
       }
     },

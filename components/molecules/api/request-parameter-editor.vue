@@ -20,9 +20,9 @@
         
         <div class="col-span-7">
           <div
-            class="flex justify-end items-center"
+            class="flex justify-end items-center h-full "
           >
-            <div class="flex-grow">
+            <div class="flex-grow h-full ">
               <template v-if="parameter.type === 'boolean'">
                 <select
                   v-model="parameter.value"
@@ -34,13 +34,13 @@
               </template>
               
               <template v-else-if="parameter.type === 'object' || parameter.type === 'array'">
-                <div class="flex justify-start items-center">
+                <div class="flex justify-start items-center h-full">
                   <p class="mr-2">
                     子要素
                   </p>
                   <button
                     @click="addChild"
-                    class="text-sm text-white aspect-square px-1 bg-[#842ff7] rounded-full flex justify-center items-center"
+                    class="text-xs text-[#842ff7] hover:bg-[#842ff7] active:bg-purple-900 hover:text-white transition-all duration-200 aspect-square px-1 border border-[#842ff7] rounded-full flex justify-center items-center"
                   >
                     <font-awesome-icon :icon="['fas', 'plus']" />
                   </button>
@@ -51,7 +51,7 @@
                 <input
                   v-model="parameter.value"
                   :type="parameter.type === 'number' ? 'number' : 'text'"
-                  class="w-full px-2 py-1 outline-none rounded border"
+                  class="w-full h-full px-2 py-1 outline-none rounded border"
                 />
               </template>
             </div>
@@ -72,7 +72,6 @@
         <div
           v-for="(child, index) in parameter.children"  
           :key="index"
-          class="mt-1"
         >
           <MoleculesApiRequestParameterEditor
             :model-value="child"

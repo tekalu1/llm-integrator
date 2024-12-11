@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { type ExecutionResult, type ExecutionResultV2, type FlowItem } from '~/types/item/flow';
+import type { ExecuteStatus, IsExecutedFlow } from '~/types/ui';
 
 export const useUiStore = defineStore('uiStore', {
   state: () => ({
@@ -13,7 +14,8 @@ export const useUiStore = defineStore('uiStore', {
     },
     focusedItemId: "",
     executionResults: {
-    } as ExecutionResultV2
+    } as ExecutionResultV2,
+    isExecutedFlow: {} as IsExecutedFlow
   }),
   actions: {
     getEditModeStatus(flowId: string): string{
@@ -50,6 +52,20 @@ export const useUiStore = defineStore('uiStore', {
     },
     setExecutionResults(flowId: string, executionResult: ExecutionResult): void{
       this.executionResults[flowId].push(executionResult)
-    }
+    },
+    getIsExecutedFlow(flowId: string): ExecuteStatus {
+      if(!this.isExecutedFlow[flowId]){
+        this.isExecutedFlow[flowId] = 'Not yet'
+      }
+      return this.isExecutedFlow[flowId]
+    },
+    setIsExecutedFlow(flowId: string, status: ExecuteStatus): void{
+      this.isExecutedFlow[flowId] = status
+      console.log("setIsExecutedFlow : " + this.isExecutedFlow[flowId])
+      console.log("getIsExecutedFlow : " + this.getIsExecutedFlow(flowId))
+    },
+    clearIsExecutedFlow() {
+      this.isExecutedFlow = {} as IsExecutedFlow
+    },
   }
 });

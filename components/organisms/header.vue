@@ -3,7 +3,7 @@
     <div class="col-span-2 flex items-center justify-start ml-4">
       <img src="~/assets/logo.webp" class="w-8 rounded-md mr-2" />
       <p class="font-bold max-md:hidden">
-        API Labo
+        API Labo.
       </p>
     </div>
     <!-- フロー設定部分 -->
