@@ -33,10 +33,11 @@ export const useAPIExecution = defineStore('APIExecution', {
     },
     executeScriptApiItem(apiItem: ApiItem) {
       const flowStore = useFlowStore();
+      const uiStore = useUiStore();
       try {
         const func = new Function('variables', 'result', apiItem.script);
         if(apiItem.isScriptEnabled){
-          func(flowStore.masterFlow.variables,apiItem.executionResults.slice(-1)[0]); // オブジェクトをスクリプトで操作
+          func(flowStore.masterFlow.variables,uiStore.executionResults[apiItem.id].slice(-1)[0]); // オブジェクトをスクリプトで操作
         }
       } catch (error) {
         console.error('スクリプト実行エラー:', error);
@@ -161,13 +162,14 @@ export const useAPIExecution = defineStore('APIExecution', {
       return result
     },
     async runFlow (flowItem: FlowItem) {
+      const uiStore = useUiStore();
 
       this.isExecuting = true;
       const startTime = Date.now();
   
       try {
         await this.callApi(flowItem)
-        if (flowItem.executionResults) {
+        if (uiStore.executionResults[flowItem.id]) {
         } else {
         }
       } catch (e: any) {
@@ -178,6 +180,7 @@ export const useAPIExecution = defineStore('APIExecution', {
     },
     async callApi (flowItem: FlowItem | ApiItem | ConditionItem) {
       const flowStore = useFlowStore();
+      const uiStore = useUiStore();
       const startTime = Date.now();
       if(!flowItem.isItemActive){
         return
@@ -207,7 +210,7 @@ export const useAPIExecution = defineStore('APIExecution', {
               executionDate: startTime,
               duration: Date.now() - startTime
             } 
-            flowItem.executionResults.push(executionResult)
+            uiStore.setExecutionResults(flowItem.id,executionResult)
             this.executeScriptApiItem(flowItem)
           }
           console.log("result : ")

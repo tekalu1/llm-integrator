@@ -54,14 +54,14 @@
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500">
             </div>
         </div>
-      <div v-if="apiItem.executionResults.length > 0 ">
+      <div v-if="uiStore.getExecutionResults(apiItem.id).length > 0 ">
         <p class="font-bold mb-4">
           最新の実行
         </p>
-        <AtomsApiResultCard :execution-result="apiItem.executionResults[apiItem.executionResults.length - 1]" />
+        <AtomsApiResultCard :execution-result="uiStore.getExecutionResults(apiItem.id)[uiStore.getExecutionResults(apiItem.id).length - 1]" />
       </div>
       
-      <div v-if="apiItem.executionResults.length > 1 " class="w-full">
+      <div v-if="uiStore.getExecutionResults(apiItem.id).length > 1 " class="w-full">
         <AtomsCommonAccordion :id-name="'result-list'" >
           <template v-slot:summary>
             <button class="flex items-center justify-start mt-2 hover:bg-gray-200 p-2 rounded-md transition duration-150">
@@ -73,8 +73,8 @@
           </template>
           <template v-slot:detail>
             <div  class="flex flex-col-reverse items-center justify-center mt-4 w-full">
-              <div v-for="(executionResult, index) in apiItem.executionResults" :key="index" class="mb-2 w-full">
-                <div v-if="index !== apiItem.executionResults.length - 1 " class="w-full">
+              <div v-for="(executionResult, index) in uiStore.getExecutionResults(apiItem.id)" :key="index" class="mb-2 w-full">
+                <div v-if="index !== uiStore.getExecutionResults(apiItem.id).length - 1 " class="w-full">
                   <AtomsApiResultCard :execution-result="executionResult" />
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { type ExecutionResult, type FlowItem } from '~/types/item/flow';
+import { type ExecutionResult, type ExecutionResultV2, type FlowItem } from '~/types/item/flow';
 
 export const useUiStore = defineStore('uiStore', {
   state: () => ({
@@ -12,6 +12,8 @@ export const useUiStore = defineStore('uiStore', {
       "PUT": "#f72ff0",
     },
     focusedItemId: "",
+    executionResults: {
+    } as ExecutionResultV2
   }),
   actions: {
     getEditModeStatus(flowId: string): string{
@@ -39,6 +41,15 @@ export const useUiStore = defineStore('uiStore', {
     },
     setFocusedItemId(flowId: string): void{
       this.focusedItemId = flowId
+    },
+    getExecutionResults(flowId: string): ExecutionResult[]{
+      if(!this.executionResults[flowId]){
+        this.executionResults[flowId] = []
+      }
+      return this.executionResults[flowId]
+    },
+    setExecutionResults(flowId: string, executionResult: ExecutionResult): void{
+      this.executionResults[flowId].push(executionResult)
     }
   }
 });

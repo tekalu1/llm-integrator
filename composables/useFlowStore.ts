@@ -149,6 +149,25 @@ export const useFlowStore = defineStore('flowStore', {
         console.error('Failed to load saved flows:', e);
       }
     },
+    clearLegacyData(){
+      try{
+        this.clearExecutionResultsFlowItem(this.masterFlow)
+      }catch(e){
+        console.error('Failed to clearLegacyData:', e);
+      }
+    },
+    clearExecutionResultsFlowItem(flowItem: FlowItem){
+      try{
+        flowItem.executionResults = []
+        if(flowItem.flowItems.length > 0){
+          for(const flowItemChild of flowItem.flowItems){
+            this.clearExecutionResultsFlowItem(flowItemChild)
+          }
+        }
+      }catch(e){
+        console.error('Failed to load saved flows:', e);
+      }
+    },
     saveFlow(flowItem: FlowItem, isSaveAs = false) {
       const savedflowItem: SavedFlowItem = {
         id: uuidv4(),
@@ -180,12 +199,13 @@ export const useFlowStore = defineStore('flowStore', {
         console.error('Failed to load saved flows:', e);
       }
       
-      this.masterFlow = savedFlowItem.flowItem;
+      this.importFlow(savedFlowItem.flowItem)
       this.uuuidOfLoadedSavedFlow = savedFlowItem.id
     },
     importFlow(flowItem: FlowItem) {
       try{
         this.masterFlow = JSON.parse(JSON.stringify(flowItem))
+        this.clearLegacyData()
         console.log(JSON.stringify(this.masterFlow))
       }catch(e){
         console.error(e)

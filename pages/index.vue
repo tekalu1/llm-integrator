@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-items-center h-screen w-full bg-gray-200 text-xs" @keydown="onKeyDown">
     <OrganismsHeader />
+    <AtomsCommonNotificationQueue />
     <!-- <div class="fixed h-64" >
       {{ flowStore.history }}
     </div> -->

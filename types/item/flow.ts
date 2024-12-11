@@ -1,3 +1,5 @@
+import type FlowItem from "~/components/organisms/flow-item.vue";
+
 export type FlowItem = {
   id: string;
   name: string;
@@ -17,6 +19,10 @@ export type ExecutionResult = {
   error?: {};
   executionDate: number;
   duration: number;
+}
+
+export type ExecutionResultV2 = {
+  [flowItemId: string]: ExecutionResult[]
 }
 
 export type ExecutionHistory = {
