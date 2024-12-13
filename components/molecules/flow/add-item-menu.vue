@@ -3,7 +3,8 @@
   const uiStore = useUiStore();
   const loopStore = useLoopStore();
   const scriptStore = useScriptStore();
-  const endStore = useEndtStore();
+  const endStore = useEndStore();
+  const waitStore = useWaitStore();
   const APIExecution = useAPIExecution();
   import { type FlowItem } from '~/types/item/flow';
 
@@ -50,6 +51,12 @@
             <AtomsCommonItemLogo item-type="end" size="small" :rounded="true" />
             <p class="ml-2">
                 終了
+            </p>
+        </button>
+        <button @click="waitStore.addEndItem(flowItem.flowItems)" class="rounded-sm  px-2  hover:bg-black hover:bg-opacity-10 w-full  flex items-center justify-start py-1">
+            <AtomsCommonItemLogo item-type="wait" size="small" :rounded="true" />
+            <p class="ml-2">
+                待機
             </p>
         </button>
     </div>

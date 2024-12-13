@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
-import type { EndItem } from '~/types/item/end';
 import { type FlowItem } from '~/types/item/flow';
+import type { WaitItem } from '~/types/item/wait';
 
-export const useEndStore = defineStore('endStore', {
+export const useWaitStore = defineStore('waitStore', {
   state: () => ({
   }),
   actions: {
@@ -11,13 +11,14 @@ export const useEndStore = defineStore('endStore', {
       newflowItem = {
         id: "",
         name: "",
-        type: "end",
+        type: "wait",
         description: "",
         isItemActive: true,
         variables: {},
         executionResults: [],
-        flowItems: []
-      } as EndItem
+        flowItems: [],
+        waitTime: 0
+      } as WaitItem
     )
     {
       const flowStore = useFlowStore();

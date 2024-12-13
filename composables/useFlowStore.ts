@@ -206,7 +206,6 @@ export const useFlowStore = defineStore('flowStore', {
       try{
         this.masterFlow = JSON.parse(JSON.stringify(flowItem))
         this.clearLegacyData()
-        console.log(JSON.stringify(this.masterFlow))
       }catch(e){
         console.error(e)
       }
@@ -332,22 +331,22 @@ export const useFlowStore = defineStore('flowStore', {
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return left.value < right.value;
+            return Number(left.value) < Number(right.value);
           case '>':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return left.value > right.value;
+            return Number(left.value) > Number(right.value);
           case '<=':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return left.value <= right.value;
+            return Number(left.value) <= Number(right.value);
           case '>=':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return left.value >= right.value;
+            return Number(left.value) >= Number(right.value);
           case 'contain':
               if (typeof left.value === 'string' && typeof right.value === 'string') {
                   return left.value.includes(right.value);

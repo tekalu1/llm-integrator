@@ -182,6 +182,9 @@ export const useAPIExecution = defineStore('APIExecution', {
     async callApi (flowItem: FlowItem | ApiItem | ConditionItem) {
       const flowStore = useFlowStore();
       const uiStore = useUiStore();
+      const delay = (ms: number): Promise<void> => {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
       const startTime = Date.now();
       if(!flowItem.isItemActive){
         return
@@ -191,8 +194,9 @@ export const useAPIExecution = defineStore('APIExecution', {
       }
       uiStore.setIsExecutedFlow(flowItem.id, 'In progress')
       try {
-        if(flowItem.type === 'condition'){
+        if(flowItem.type === 'condition' || flowItem.type === 'loop'){
           if(!flowStore.evaluateCondition(flowItem.condition)){
+            console.log("saaaaa")
             uiStore.setIsExecutedFlow(flowItem.id, 'Done')
             return
           }
@@ -230,18 +234,22 @@ export const useAPIExecution = defineStore('APIExecution', {
         }
         if(flowItem.flowItems.length > 0){
           for (const item of flowItem.flowItems) {
-            await this.callApi(item); // 次のステップを実行
+            await this.callApi(item); // 子ステップを実行
           }
         }
         if(flowItem.type === 'loop'){
-          if(flowItem.loopType === 'while' && !flowStore.evaluateCondition(flowItem.condition)){
-            this.callApi(flowItem)
+          console.log("flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition) : ",flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition))
+          if(flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition)){
+            await this.callApi(JSON.parse(JSON.stringify(flowItem)))
           }
         }
         if(flowItem.type === 'end'){
           this.isExecuting = false
         }
         
+        if(flowItem.type === 'wait'){
+          await delay(flowItem.waitTime)
+        }
         uiStore.setIsExecutedFlow(flowItem.id, 'Done')
       } catch (e: any) {
           // error.value = `予期しないエラーが発生しました: ${e.message}`;

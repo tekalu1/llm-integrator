@@ -1,14 +1,14 @@
 <template>
     <draggable ref="el" v-model="flowItem.flowItems" :animation="150" easing="ease" group="flow" ghostClass="ghost" :swapThreshold="0.1" class=" my-[1px] w-full flex flex-col items-center justify-center"   >
       <template v-for=" (flowItemChild,index) in flowItem.flowItems" :key="flowItem.id" >
-        <a :href="'#dynmcwrpr_' + flowItemChild.id" class="flex w-full overflow-hidden pr-1">
+        <a :href="'#dynmcwrpr_' + flowItemChild.id" class="flex w-full">
           <div class="flex  bg-white bg-opacity-50  rounded-lg mb-1 w-full overflow-hidden pr-1 transition-all duration-150" :class="uiStore.focusedItemId === flowItemChild.id ? 'border-2 border-blue-500':'border border-gray-300'"  @click.stop="uiStore.setFocusedItemId(flowItemChild.id)">
             <AtomsCommonItemLogo :item-type="flowItemChild.type" size="small" />
             <div class="flex flex-col items-start justify-center w-full ml-1">
               <div class="flex items-center justify-center w-full pt-1">
-                <div v-if="uiStore.getIsExecutedFlow(flowItemChild.id) === 'Done'" class="flex flex-col items-center justify-center">
-                  <font-awesome-icon v-if="uiStore.getExecutionResults(flowItemChild.id)[uiStore.getExecutionResults(flowItemChild.id).length - 1]?.success" :icon="['fas', 'circle-check']" class="text-green-600" />
-                  <font-awesome-icon v-if="!uiStore.getExecutionResults(flowItemChild.id)[uiStore.getExecutionResults(flowItemChild.id).length - 1]?.success" :icon="['fas', 'circle-exclamation']" class="text-red-600" />
+                <div v-if="uiStore.getIsExecutedFlow(flowItemChild.id) === 'Done' && flowItemChild.type === 'api'" class="flex flex-col items-center justify-center">
+                  <font-awesome-icon v-if="uiStore.getExecutionResults(flowItemChild.id)[uiStore.getExecutionResults(flowItemChild.id).length - 1]?.success " :icon="['fas', 'circle-check']" class="text-green-600" />
+                  <font-awesome-icon v-if="!uiStore.getExecutionResults(flowItemChild.id)[uiStore.getExecutionResults(flowItemChild.id).length - 1]?.success " :icon="['fas', 'circle-exclamation']" class="text-red-600" />
                 </div>
                 <div v-else-if="uiStore.getIsExecutedFlow(flowItemChild.id) === 'In progress'" class="flex flex-col items-center justify-center">
                   <div class="flex items-center justify-center">
@@ -44,7 +44,6 @@
               <MoleculesSideMenuDraggableFlowList :flow-item="flowItemChild" />
             </div>
           </div>
-
         </a>
       </template>
     </draggable>

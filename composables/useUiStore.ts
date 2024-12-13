@@ -61,8 +61,6 @@ export const useUiStore = defineStore('uiStore', {
     },
     setIsExecutedFlow(flowId: string, status: ExecuteStatus): void{
       this.isExecutedFlow[flowId] = status
-      console.log("setIsExecutedFlow : " + this.isExecutedFlow[flowId])
-      console.log("getIsExecutedFlow : " + this.getIsExecutedFlow(flowId))
     },
     clearIsExecutedFlow() {
       this.isExecutedFlow = {} as IsExecutedFlow

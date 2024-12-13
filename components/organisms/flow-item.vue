@@ -90,6 +90,9 @@
         <div v-if="flowItem.type == 'end'">
           <MoleculesEndItem :end-item="flowItem" />
         </div>
+        <div v-if="flowItem.type == 'wait'">
+          <MoleculesWaitItem :wait-item="flowItem" />
+        </div>
         <AtomsCommonModalButton class="mt-4 " >
           <template v-slot:button>
             <button class="rounded-xl border-[#842ff7] border hover:bg-[#842ff7] hover:text-white px-3 py-1 transition duration-100 mb-2">

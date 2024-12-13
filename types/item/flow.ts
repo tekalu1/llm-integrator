@@ -3,7 +3,7 @@ import type FlowItem from "~/components/organisms/flow-item.vue";
 export type FlowItem = {
   id: string;
   name: string;
-  type: 'flow'|'api'|'condition'|'loop'|'script'|'end';
+  type: 'flow'|'api'|'condition'|'loop'|'script'|'end'|'wait';
   description: string;
   isItemActive: boolean;
   variables: {};
