@@ -8,7 +8,7 @@
                 <MonacoEditor" v-model="valueHeaders" @focusout="setHeadersValueToStore" lang="json" :options="{ scrollbar: {alwaysConsumeMouseWheel: false} }" class="h-64" />
             </div>
         </div>
-        <div class="rounded-lg bg-white overflow-hidden py-4">
+        <div v-if="apiItem.method !== 'GET'" class="rounded-lg bg-white overflow-hidden py-4">
             <p class="px-2 ml-2 mb-2">
                 ボディ
             </p>

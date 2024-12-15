@@ -49,7 +49,7 @@ defineExpose({
                     class="flex flex-col items-center justify-center drop-shadow-lg rounded-lg md:max-h-screen transition-all duration-300 overflow-auto">
                     <div class="flex flex-col w-full ">
                         <div class="flex justify-end w-full">
-                            <font-awesome-icon class="text-sm m-2 hover:opacity-50 transition-all duration-300 cursor-pointer"
+                            <font-awesome-icon class="m-2 hover:opacity-50 transition-all duration-300 cursor-pointer"
                                 :class="'text-' + buttonColor"
                                 :icon="['fas', 'xmark']" @click="changeVisibility" />
                         </div>

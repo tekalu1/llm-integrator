@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { type ExecutionResult, type ExecutionResultV2, type FlowItem } from '~/types/item/flow';
-import type { ExecuteStatus, IsExecutedFlow } from '~/types/ui';
+import type { ExecuteStatus, IsExecutedFlow, SideMenuStatus } from '~/types/ui';
 
 export const useUiStore = defineStore('uiStore', {
   state: () => ({
@@ -15,7 +15,8 @@ export const useUiStore = defineStore('uiStore', {
     focusedItemId: "",
     executionResults: {
     } as ExecutionResultV2,
-    isExecutedFlow: {} as IsExecutedFlow
+    isExecutedFlow: {} as IsExecutedFlow,
+    sideMenuStatus: 'Flow List' as SideMenuStatus
   }),
   actions: {
     getEditModeStatus(flowId: string): string{
@@ -64,6 +65,12 @@ export const useUiStore = defineStore('uiStore', {
     },
     clearIsExecutedFlow() {
       this.isExecutedFlow = {} as IsExecutedFlow
+    },
+    getSideMenuStatus(): SideMenuStatus {
+      return this.sideMenuStatus
+    },
+    setSideMenuStatus(status: SideMenuStatus) {
+      this.sideMenuStatus = status
     },
   }
 });

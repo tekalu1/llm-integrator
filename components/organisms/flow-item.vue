@@ -12,12 +12,12 @@
   });
 </script>
 <template>
-  <div class="p-2 rounded-2xl  mb-2 overflow-hidden transition-all duration-150" :class="[flowItem.isItemActive ? 'bg-white bg-opacity-50 ':'bg-black bg-opacity-10', uiStore.focusedItemId === flowItem.id ? 'border-2 border-blue-500':'border border-gray-300']" @click.stop="uiStore.setFocusedItemId(flowItem.id)" >
+  <div class="py-1 px-2 rounded-xl  mb-2 overflow-hidden transition-all duration-150" :class="[flowItem.isItemActive ? 'bg-[#f2f3f5]':'bg-gray-300 ', uiStore.focusedItemId === flowItem.id ? 'border-2 border-blue-500':'border border-gray-300']" @click.stop="uiStore.setFocusedItemId(flowItem.id)" >
     <AtomsCommonDynamicSizeWrapper :id-name="'dynmcwrpr_' + flowItem.id">
       <div v-if="flowItem" class="w-full">
         <div class="flex items-center justify-center">
           <AtomsCommonItemLogo :item-type="flowItem.type" :rounded="true" />
-          <div class="flex items-center justify-start flex-grow">
+          <div class="flex items-center justify-start flex-grow ml-2">
             <input
               v-model="flowItem.name"
               type="text"

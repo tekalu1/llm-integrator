@@ -39,18 +39,18 @@
       実行時間：{{ executionResult.duration }} ms
       </p>
       <AtomsCommonModalWindow>
-      <template v-slot:button>
-          <button class="hover:underline text-blue-600">
-          実行結果を確認する
-          </button>
-      </template>
-      <template v-slot:modal>
+        <template v-slot:button>
+            <button class="hover:underline text-blue-600">
+            実行結果を確認する
+            </button>
+        </template>
+        <template v-slot:modal>
 
-          <div class="flex flex-col items-start justify-center">
-          <pre v-if="executionResult.success" class="bg-gray-50 p-4 rounded overflow-y-scroll relative w-[600px] max-h-60 text-sm">{{ formatResponse(executionResult.data) }}</pre>
-          <pre v-if="!executionResult.success" class="bg-gray-50 p-4 rounded overflow-y-scroll relative w-[600px] max-h-60 text-sm">{{ formatResponse(executionResult.error) }}</pre>
+          <div class="flex flex-col items-start justify-center overflow-auto relative w-[90vw] max-h-[90vh] text-xs">
+            <pre v-if="executionResult.success" class="bg-gray-50 p-4 rounded ">{{ formatResponse(executionResult.data) }}</pre>
+            <pre v-if="!executionResult.success" class="bg-gray-50 p-4 rounded ">{{ formatResponse(executionResult.error) }}</pre>
           </div>
-      </template>
+        </template>
       </AtomsCommonModalWindow>
     </div>
 </template>

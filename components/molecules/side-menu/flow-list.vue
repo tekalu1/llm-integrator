@@ -2,7 +2,7 @@
   const flowStore = useFlowStore();
 </script> 
 <template>
-  <div class="w-full  bg-white  bg-opacity-50 border-gray-300 border rounded-2xl py-4 px-4 flex flex-col justify-start items-center overflow-hidden">
+  <div class="w-full h-fit py-4 px-4 flex flex-col justify-start items-center">
     <AtomsCommonDynamicSizeWrapper id-name="flow-list" class=" w-full" >
       <div class="w-full flex flex-col items-start justify-center" >
         <p class="mb-3">

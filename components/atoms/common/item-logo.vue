@@ -20,7 +20,7 @@ import { faL } from '@fortawesome/free-solid-svg-icons';
 
 <template>
   <div class=" text-white font-bold flex justify-center items-center" :class="[size === 'small' ? 'text-xs ':'px-2', rounded ? 'rounded-md':'', itemType === 'flow' ? 'bg-blue-600':'', itemType === 'api' ? 'bg-red-600':'', itemType === 'condition' ? 'bg-orange-600':'', itemType === 'loop' ? 'bg-sky-600':'', itemType === 'script' ? 'bg-purple-600':'', itemType === 'end' ? 'bg-yellow-600':'', itemType === 'wait' ? 'bg-lime-600':'']" >
-    <div class="w-6 flex justify-center items-center py-1 ">
+    <div class="w-5 flex justify-center items-center py-1 ">
       <font-awesome-icon v-if="itemType === 'flow'" :icon="['fas', 'wind']" :class="size === 'small' ? '':'mr-2'" />
       <font-awesome-icon v-if="itemType === 'api'" :icon="['fas', 'circle-nodes']" :class="size === 'small' ? '':'mr-2'" />
       <font-awesome-icon v-if="itemType === 'condition'" :icon="['fas', 'diagram-project']" :class="size === 'small' ? '':'mr-2'" />

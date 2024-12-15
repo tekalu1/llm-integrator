@@ -7,7 +7,7 @@
         class="p-4 rounded shadow"
       >
         <p>{{ message.content }}</p>
-        <button @click="removeMessage(message.id)" class="mt-2 text-sm underline">
+        <button @click="removeMessage(message.id)" class="mt-2 underline">
           閉じる
         </button>
       </div>

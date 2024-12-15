@@ -297,65 +297,105 @@ export const useFlowStore = defineStore('flowStore', {
         }
       }
     },
-    evaluateCondition(condition: Condition): boolean {
+    evaluateCondition(condition: Condition): boolean{
+      const result: boolean = this.evaluateConditionReturnByConditionValue(condition).value === 'true'
+      console.log("evaluateCondition : " + result)
+      return result
+    },
+    evaluateConditionReturnByConditionValue(condition: Condition): ConditionValue {
       const toBoolean = (booleanStr: string): boolean => {
         // "true"文字列と比較した結果を返す
         // 念のため小文字化しておく
         return booleanStr.toLowerCase() === "true";
       };
-      
-      const evaluateValue = (value: ConditionValue): ConditionValue => {
-        if (value.valueType === 'condition') {
-          // If the value is a nested Condition, evaluate it recursively
-          return {
-            value: this.evaluateCondition(value.value).toString(),
-            valueType: 'boolean'
-          } as ConditionValue;
-        }
-        return {
-          value: this.applyFlowVariablesOnString(value.value,this.masterFlow),
-          valueType: value.valueType
-        } as ConditionValue;
-      };
   
-      let left: ConditionValue = evaluateValue(condition.leftSide)
+      let left: ConditionValue = JSON.parse(JSON.stringify(condition.leftSide))
+      let right: ConditionValue = JSON.parse(JSON.stringify(condition.rightSide))
 
-      let right: ConditionValue = evaluateValue(condition.rightSide)
-  
+      if(left.valueType === 'condition'){
+        left = this.evaluateConditionReturnByConditionValue(left.value)
+      }
+      if(right.valueType === 'condition'){
+        right = this.evaluateConditionReturnByConditionValue(right.value)
+      }
+
+      left.value = this.applyFlowVariablesOnString(left.value, this.masterFlow)
+      right.value = this.applyFlowVariablesOnString(right.value, this.masterFlow)
+
+      console.log("left: " + left.value + "  right: " + right.value)
+      
+      let evaluateResult: boolean = false
+
       switch (condition.comparisonOperator) {
           case '=':
-            return left.value === right.value;
+            evaluateResult = left.value === right.value
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case '!=':
-            return left.value !== right.value;
+            evaluateResult = left.value !== right.value;
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case '<':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return Number(left.value) < Number(right.value);
+            evaluateResult = Number(left.value) < Number(right.value);
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case '>':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return Number(left.value) > Number(right.value);
+            evaluateResult = Number(left.value) > Number(right.value);
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case '<=':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return Number(left.value) <= Number(right.value);
+            evaluateResult = Number(left.value) <= Number(right.value);
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case '>=':
             if(left.valueType !== 'number' || right.valueType !== 'number'){
               throw new Error(`Invalid types for operator: ${typeof left.value} and ${typeof right.value}`);
             }
-            return Number(left.value) >= Number(right.value);
+            evaluateResult = Number(left.value) >= Number(right.value);
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case 'contain':
               if (typeof left.value === 'string' && typeof right.value === 'string') {
-                  return left.value.includes(right.value);
+                evaluateResult = left.value.includes(right.value);
+                return {
+                  value: evaluateResult.toString(),
+                  valueType: 'boolean'
+                };
               }
               throw new Error(`Invalid types for 'contain' operator: ${typeof left.value} and ${typeof right.value}`);
           case '&':
-              return Boolean(left.value) && Boolean(right.value);
+            evaluateResult = toBoolean(left.value) && toBoolean(right.value);
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           case '|':
-              return Boolean(left.value) || Boolean(right.value);
+            evaluateResult = toBoolean(left.value) || toBoolean(right.value);
+            return {
+              value: evaluateResult.toString(),
+              valueType: 'boolean'
+            };
           default:
               throw new Error(`Unsupported operator: ${condition.comparisonOperator}`);
       }

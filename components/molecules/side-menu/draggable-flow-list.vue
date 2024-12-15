@@ -1,8 +1,8 @@
 <template>
     <draggable ref="el" v-model="flowItem.flowItems" :animation="150" easing="ease" group="flow" ghostClass="ghost" :swapThreshold="0.1" class=" my-[1px] w-full flex flex-col items-center justify-center"   >
       <template v-for=" (flowItemChild,index) in flowItem.flowItems" :key="flowItem.id" >
-        <a :href="'#dynmcwrpr_' + flowItemChild.id" class="flex w-full">
-          <div class="flex  bg-white bg-opacity-50  rounded-lg mb-1 w-full overflow-hidden pr-1 transition-all duration-150" :class="uiStore.focusedItemId === flowItemChild.id ? 'border-2 border-blue-500':'border border-gray-300'"  @click.stop="uiStore.setFocusedItemId(flowItemChild.id)">
+        <a :href="'#dynmcwrpr_' + flowItemChild.id" class="flex w-full mb-1">
+          <div class="flex   rounded-lg w-full overflow-hidden pr-1 transition-all duration-150" :class="[uiStore.focusedItemId === flowItemChild.id ? 'border-2 border-blue-500':'border border-gray-200', flowItemChild.isItemActive? 'bg-white':'bg-gray-300']"  @click.stop="uiStore.setFocusedItemId(flowItemChild.id)">
             <AtomsCommonItemLogo :item-type="flowItemChild.type" size="small" />
             <div class="flex flex-col items-start justify-center w-full ml-1">
               <div class="flex items-center justify-center w-full pt-1">

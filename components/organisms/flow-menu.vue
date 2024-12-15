@@ -6,17 +6,17 @@
               <draggable ref="el" v-model="flowStore.savedFlowItems" :animation="150" easing="ease" class=" m-1" >
                 <template v-for="(savedFlow, index) in flowStore.savedFlowItems" :key="savedFlow.id"  >
                   <div  class="px-2 py-1 cursor-pointer group/flow flex justify-center items-center ">
-                    <div class="flex flex-col justify-center items-center rounded-lg px-3 py-1 hover:bg-opacity-10" @click="flowStore.loadFlow(savedFlow)"  :class="savedFlow.id === flowStore.uuuidOfLoadedSavedFlow ? 'bg-white  text-[#842ff7] shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)]  bg-opacity-100 hover:bg-opacity-80':'bg-black  bg-opacity-0 '">
-                      <div class="font-medium">
+                    <div class="flex flex-col justify-center items-center rounded-lg px-3 py-1 hover:bg-[#f5ecff]" @click="flowStore.loadFlow(savedFlow)"  :class="savedFlow.id === flowStore.uuuidOfLoadedSavedFlow ? 'bg-[#f5ecff]  text-[#842ff7] ':' '">
+                      <div class="">
                         <p v-if="savedFlow.flowItem?.name">
                           {{ savedFlow.flowItem?.name }}
                         </p>
-                        <p v-else class="text-gray-500 font-normal">
+                        <p v-else class="text-gray-500">
                           Untitled
                         </p>
                       </div>
                       <!-- <div class="text-sm ">{{ savedFlow.flowItem?.description }}</div> -->
-                      <div class="text-xs ">
+                      <div class="">
                         更新日: {{ new Date(savedFlow.updatedAt).toLocaleString() }}
                       </div>
                     </div>

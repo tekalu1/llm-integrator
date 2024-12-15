@@ -48,7 +48,7 @@ const getReleaseWrapperHeight = computed(() => {
 </script>
 
 <template>
-  <div class="transition-all duration-150" :style="{ height: releaseWrapperHeight + 'px' }">
+  <div class="transition-all duration-150 overflow-hidden" :style="{ height: releaseWrapperHeight + 'px' }">
     <div :id="idName" class="flex">
         <slot  />
     </div>

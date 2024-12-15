@@ -1,0 +1,26 @@
+<script lang="ts" setup>
+  const flowStore = useFlowStore();
+  const isLoading = ref(true)
+
+  onMounted(() => {
+    flowStore.loadFlows()
+    isLoading.value = false
+  })
+</script>
+
+<template>
+  <div class="w-screen h-screen flex flex-col items-center justify-center text-xs bg-gray-200">
+    <OrganismsCommonLoading :is-loading="isLoading" class="" />
+    <OrganismsHeader class="" />
+    <!-- <AtomsCommonNotificationQueue /> -->
+    <div class="relative flex-grow w-full">
+      <slot  />
+    </div>
+    <div class="absolute bottom-10 left-0 w-full flex items-center justify-center pointer-events-none">
+      <OrganismsCommander />
+    </div>
+  </div>
+</template>
+
+<style>
+</style>

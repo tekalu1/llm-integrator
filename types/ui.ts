@@ -8,4 +8,8 @@ export type RequestParameter = {
 export type IsExecutedFlow = {
   [flowId: string]: ExecuteStatus ;
 }
+
 export type ExecuteStatus = 'Not yet' | 'In progress' | 'Done' ;
+
+
+export type SideMenuStatus = 'Flow List' | 'Variable List' | 'Both' ;

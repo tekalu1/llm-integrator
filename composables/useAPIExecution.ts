@@ -196,7 +196,6 @@ export const useAPIExecution = defineStore('APIExecution', {
       try {
         if(flowItem.type === 'condition' || flowItem.type === 'loop'){
           if(!flowStore.evaluateCondition(flowItem.condition)){
-            console.log("saaaaa")
             uiStore.setIsExecutedFlow(flowItem.id, 'Done')
             return
           }
@@ -240,6 +239,7 @@ export const useAPIExecution = defineStore('APIExecution', {
         if(flowItem.type === 'loop'){
           console.log("flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition) : ",flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition))
           if(flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition)){
+            await delay(200)
             await this.callApi(JSON.parse(JSON.stringify(flowItem)))
           }
         }

@@ -1,64 +1,31 @@
 <template>
-  <div class="fixed h-screen w-full bg-gray-200 z-50 transition-all duration-300 flex flex-col items-center justify-center" :class="isLoading ? 'opacity-100  ':'opacity-0 pointer-events-none'" >
-    <p>
-      Loading...
-    </p>
-    <div class="flex items-center justify-center p-4">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500">
-      </div>
+  <div v-if="authStore.isLoggedIn()" class="flex items-start justify-center w-full h-full  text-[#183153]">
+    <div class="max-xl:w-[50vw] xl:w-[25vw] h-full">
+      <OrganismsSideMenu />
     </div>
-  </div>
-  <div class="flex flex-col items-center justify-items-center h-screen w-full bg-gray-200 text-xs" @keydown="onKeyDown">
-    <OrganismsHeader />
-    <AtomsCommonNotificationQueue />
-    <!-- <div class="fixed h-64" >
-      {{ flowStore.history }}
-    </div> -->
-    <div class="flex items-center justify-center flex-grow w-full  text-[#183153]">
-      <div class="">
-        <AtomsCommonCoolScrollBarContainer class="h-[calc(100vh-128px)] pb-8 pl-2 rounded-lg">
-          <OrganismsSideMenu />
-        </AtomsCommonCoolScrollBarContainer>
-      </div>
-      <div class=" flex-grow">
-        <div class="relative w-full  h-full">
-          <AtomsCommonCoolScrollBarContainer class="h-[calc(100vh-128px)] px-2 rounded-lg">
-              <div v-for="(flowItem, index) in flowStore.masterFlow.flowItems" :key="flowItem.id" class="flex flex-col items-center justify-center">
-                <OrganismsFlowItem :flow-item="flowItem" class=" w-full " />
-              </div>
-          </AtomsCommonCoolScrollBarContainer>
-          <div class="absolute bottom-0 left-0 w-full flex items-center justify-center pointer-events-none">
-            <OrganismsCommander />
-          </div>
+    <div class="w-full h-full flex-grow relative"> 
+      <AtomsCommonCoolScrollBarContainer class="max-h-full px-2 rounded-lg flex flex-col" bg-color="none">
+        <div v-for="(flowItem, index) in flowStore.masterFlow.flowItems" :key="flowItem.id" class="flex flex-col items-center justify-center">
+          <OrganismsFlowItem :flow-item="flowItem" class=" w-full " />
         </div>
-
-      </div>
+      </AtomsCommonCoolScrollBarContainer>
     </div>
-    <!-- {{ JSON.stringify(flowStore.history) }} -->
   </div>
 </template>
   
 <script setup lang="ts">
   const flowStore = useFlowStore();
+  const authStore = useAuthStore()
 
-  const isLoading = ref(true)
-  // flowStore.setupWatcher()
+  await authStore.fetchUser()
 
-  // const onKeyDown = (event) => {
-  //   console.log('keydown')
-  //   if (event.ctrlKey && event.key === 'z') {
-  //     console.log('z')
-  //     event.preventDefault(); // デフォルトのアンドゥ動作を無効化
-  //     flowStore.undoHistory();
-  //   }else if (event.ctrlKey && event.key === 'y') {
-  //     event.preventDefault(); // デフォルトのアンドゥ動作を無効化
-  //     flowStore.redoHistory();
-  //   }
-  // }
+  onBeforeMount(() => {
+  })
 
-  onMounted(() => {
-    flowStore.loadFlows()
-    isLoading.value = false
+  onMounted(async() => {
+    if(!authStore.isLoggedIn()){
+      window.location.href = '/login'
+    }
   })
 </script>
   

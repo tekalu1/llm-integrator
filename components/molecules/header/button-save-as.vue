@@ -44,7 +44,7 @@
             </button>
         </template>
         <template v-slot:modal>
-            <div class=" flex flex-col items-center justify-center">
+            <div class=" flex flex-col items-center justify-center text-xs">
                 <div class="flex items-center justify-center mb-4">
                     <p class="mr-4">
                         名前

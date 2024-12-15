@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2 w-full  bg-white bg-opacity-50 border-gray-300 border rounded-2xl py-4 px-4 flex flex-col justify-start items-center">
+  <div class="w-full  h-fit  py-4 px-4 flex flex-col justify-start items-center">
     <AtomsCommonDynamicSizeWrapper id-name="variable-list" class="w-full" >
       <div class="rounded-md w-full ">
         <div class="w-full flex items-center justify-start">
@@ -8,7 +8,7 @@
           </p>
           <button
             @click="addKey('','')"
-            class="text-sm text-white aspect-square px-1 bg-[#842ff7] rounded-full flex justify-center items-center"
+            class="text-xs text-[#842ff7] hover:bg-[#842ff7] active:bg-purple-900 hover:text-white transition-all duration-200 aspect-square px-1 border border-[#842ff7] rounded-full flex justify-center items-center"
           >
             <font-awesome-icon :icon="['fas', 'plus']" />
           </button>
@@ -28,12 +28,11 @@
               @click="deleteKey(id)"
               class="ml-2 mr-1"
               >
-              <p class=" text-red-500 hover:text-red-700 text-xl transition-all duration-300">
+              <p class=" text-red-500 hover:text-red-700 transition-all duration-300">
                 <font-awesome-icon :icon="['fas', 'minus']" />
               </p>
             </button>
         </div>
-        <!-- {{ stepStore.flow.flowVariables }} -->
       </div>
     </AtomsCommonDynamicSizeWrapper>
   </div>

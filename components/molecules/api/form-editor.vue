@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    <div class="flex items-center justify-start mt-4 mb-2">
+    <div v-if="apiItem.method !== 'GET'" class="flex items-center justify-start mt-4 mb-2">
         <p class="mr-2">
             body
         </p>
