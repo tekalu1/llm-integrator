@@ -1,4 +1,4 @@
-import type FlowItem from "~/components/organisms/flow-item.vue";
+import type FlowItem from "~/components/molecules/flow/item.vue";
 
 export type FlowItem = {
   id: string;

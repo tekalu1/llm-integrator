@@ -61,6 +61,36 @@
           </div>
         </template>
       </AtomsCommonModalWindow>
+      <!-- 重すぎるので蓋閉じ -->
+      <!-- <AtomsCommonModalWindow>
+        <template v-slot:button>
+          <button class="group/history overflow-hidden hover:bg-gray-100 rounded-xl transition-all duration-300 py-2 px-3 flex flex-col items-center justify-center" @click="uiStore.setItemDisplayMode(flowStore.masterFlow, 'history')">
+            <div class="flex items-center justify-center">
+              <div class="">
+                バージョン履歴
+                <div :class="uiStore.getItemDisplayMode(flowStore.masterFlow) === 'history' ? 'opacity-100 bg-[#842ff7] w-full': 'opacity-0 '" class="group-hover/history:bg-[#842ff7] w-0 group-hover/history:w-full opacity-100 h-[2px] rounded-md transition-all duration-500"></div>
+              </div>
+            </div>
+          </button>
+        </template>
+        <template v-slot:modal>
+          <div v-if="flowStore.histories.length > 3" class="flex flex-col items-center justify-center">
+            <button v-for="(history, index) in flowStore.histories" :key="history.id" @click="flowStore.loadHistory(history);">
+              <div v-if="index > 2" class="flex  p-2 m-1 border">
+                <p class="mr-2">{{ index - 2 }}</p>
+                <p>{{ history.name? history.name:'Untitled' }}</p>
+              </div>
+            </button>
+          </div>
+        </template>
+      </AtomsCommonModalWindow> -->
+      <button class="group/history overflow-hidden hover:bg-gray-100 rounded-xl transition-all duration-300 py-2 px-3 flex flex-col items-center justify-center" @click="uiStore.setViewMode(uiStore.getViewMode() === 'Flow' ? 'Laboratory': 'Flow')">
+        <div class="flex items-center justify-center">
+          <div class="">
+            表示変更
+          </div>
+        </div>
+      </button>
       <AtomsCommonModalButton class="p-2" modal-possition="top" >
         <template v-slot:button>
           <button

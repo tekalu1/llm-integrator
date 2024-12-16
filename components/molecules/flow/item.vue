@@ -105,7 +105,7 @@
           </template>
         </AtomsCommonModalButton>
         <div v-for="(flowItemChild, index) in flowItem.flowItems" :key="flowItemChild.id">
-          <OrganismsFlowItem :flow-item="flowItemChild" />
+          <MoleculesFlowItem :flow-item="flowItemChild" />
         </div>
       </div>
 

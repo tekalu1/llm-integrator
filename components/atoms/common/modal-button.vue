@@ -60,6 +60,7 @@
             console.error(e)
         }
     }
+
     const getTop = computed(()=>{
         if(props.modalPossition === 'bottom'){
             return floatingElementChildTop.value
@@ -71,7 +72,7 @@
     const getLeft = computed(()=>{
         if(props.modalPossitionHorizonal === 'left'){
             return floatingElementChildLeft.value
-        }else if(props.modalPossitionHorizonal === 'right'){
+        }else if(props.modalPossitionHorizonal === 'right' && buttonRight.value){
             return buttonRight.value - contentWidth.value
         }
     })

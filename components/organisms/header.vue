@@ -87,26 +87,26 @@
         公開する
         <font-awesome-icon :icon="['fas', 'chevron-down']" />
       </button>
-      
-      <AtomsCommonModalButton modal-possition-horizonal="right" >
-        <template v-slot:button >
-          <div class="flex justify-center items-center px-2 ml-4">
-            <div class=" rounded-xl px-2 hover:bg-gray-300 transition-all duration-150 flex justify-center items-center py-1">
-              <div class="bg-white text-[#842ff7] text-xl aspect-square px-2 py-1 rounded-full">
-                <font-awesome-icon :icon="['fas', 'user']" />
+      <ClientOnly>
+        <AtomsCommonModalButton modal-possition-horizonal="right" >
+          <template v-slot:button >
+            <div class="flex justify-center items-center px-2 ml-4">
+              <div class=" rounded-xl px-2 hover:bg-gray-300 transition-all duration-150 flex justify-center items-center py-1">
+                <div class="bg-white text-[#842ff7] text-xl aspect-square px-2 py-1 rounded-full">
+                  <font-awesome-icon :icon="['fas', 'user']" />
+                </div>
+                <p v-if="authStore.user" class="mr-2 px-2">
+                  {{ authStore.user.username }}
+                </p>
+                <font-awesome-icon :icon="['fas', 'chevron-down']" />
               </div>
-              <p v-if="authStore.user" class="mr-2 px-2">
-                {{ authStore.user.username }}
-              </p>
-              <font-awesome-icon :icon="['fas', 'chevron-down']" />
-
             </div>
-          </div>
-        </template>
-        <template v-slot:modal >
-          <MoleculesHeaderUserMenu />
-        </template>
-      </AtomsCommonModalButton>
+          </template>
+          <template v-slot:modal >
+            <MoleculesHeaderUserMenu />
+          </template>
+        </AtomsCommonModalButton>
+      </ClientOnly>
     </div>
   </div>
 </template>

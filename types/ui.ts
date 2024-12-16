@@ -10,6 +10,5 @@ export type IsExecutedFlow = {
 }
 
 export type ExecuteStatus = 'Not yet' | 'In progress' | 'Done' ;
-
-
 export type SideMenuStatus = 'Flow List' | 'Variable List' | 'Both' ;
+export type ViewMode = 'Flow' | 'Laboratory' ;

@@ -3,7 +3,7 @@ import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 
 export default defineEventHandler(async (event) => {
-    const adapter = new JSONFile('./server/db/db.json');
+    const adapter = new JSONFile('./server/db/auth.json');
     const db = new Low(adapter,adapter);
 
     const body = await readBody(event)

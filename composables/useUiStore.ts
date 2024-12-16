@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { type ExecutionResult, type ExecutionResultV2, type FlowItem } from '~/types/item/flow';
-import type { ExecuteStatus, IsExecutedFlow, SideMenuStatus } from '~/types/ui';
+import type { ExecuteStatus, IsExecutedFlow, SideMenuStatus, ViewMode } from '~/types/ui';
 
 export const useUiStore = defineStore('uiStore', {
   state: () => ({
@@ -16,7 +16,8 @@ export const useUiStore = defineStore('uiStore', {
     executionResults: {
     } as ExecutionResultV2,
     isExecutedFlow: {} as IsExecutedFlow,
-    sideMenuStatus: 'Flow List' as SideMenuStatus
+    sideMenuStatus: 'Flow List' as SideMenuStatus,
+    viewMode: 'Laboratory' as ViewMode
   }),
   actions: {
     getEditModeStatus(flowId: string): string{
@@ -71,6 +72,12 @@ export const useUiStore = defineStore('uiStore', {
     },
     setSideMenuStatus(status: SideMenuStatus) {
       this.sideMenuStatus = status
+    },
+    getViewMode(): ViewMode {
+      return this.viewMode
+    },
+    setViewMode(mode: ViewMode) {
+      this.viewMode = mode
     },
   }
 });
