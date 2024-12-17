@@ -1,9 +1,19 @@
+import { join, dirname } from 'path'
 import bcrypt from 'bcrypt'
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
+import { existsSync, mkdirSync } from 'fs'
 
 export default defineEventHandler(async (event) => {
-    const adapter = new JSONFile('./server/db/auth.json');
+    const file = join(process.cwd(), 'server/db/auth.json')
+    const dir = dirname(file)
+
+    // ディレクトリが無ければ作成
+    if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true })
+    }
+
+    const adapter = new JSONFile(file);
     const db = new Low(adapter,adapter);
 
     const body = await readBody(event)
