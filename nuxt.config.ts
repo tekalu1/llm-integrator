@@ -39,17 +39,17 @@ export default defineNuxtConfig({
           // node_modulesを一時ディレクトリ(node_modules_temp)へコピー
           execSync('robocopy .output\\server\\node_modules .output\\server\\node_modules_temp *.* /E || exit 0', { stdio: 'inherit' });
           // 元のnode_modulesを削除
-          execSync('rmdir /S /Q .output\\server\\node_modules', { stdio: 'inherit' });
+          execSync('rmdir /S /Q .output\\server\\node_modules || exit 0', { stdio: 'inherit' });
           // 一時ディレクトリをnode_modulesにリネーム
-          execSync('move .output\\server\\node_modules_temp .output\\server\\node_modules', { stdio: 'inherit' });
+          execSync('move .output\\server\\node_modules_temp .output\\server\\node_modules || exit 0', { stdio: 'inherit' });
         } else if (platform === 'linux') {
           // Linux(Ubuntu)環境向けコマンド
           // node_modulesを一時ディレクトリ(node_modules_temp)へコピー
-          execSync('cp -rL .output/server/node_modules/ .output/server/node_modules_temp/', { stdio: 'inherit' })
+          execSync('cp -rL .output/server/node_modules/ .output/server/node_modules_temp/ || exit 0', { stdio: 'inherit' })
           // 元のnode_modulesを削除
-          execSync('rm -rf .output/server/node_modules/', { stdio: 'inherit' })
+          execSync('rm -rf .output/server/node_modules/ || exit 0', { stdio: 'inherit' })
           // 一時ディレクトリをnode_modulesにリネーム
-          execSync('mv .output/server/node_modules_temp/ .output/server/node_modules/', { stdio: 'inherit' })
+          execSync('mv .output/server/node_modules_temp/ .output/server/node_modules/ || exit 0', { stdio: 'inherit' })
         }
       }
     }
