@@ -1,4 +1,3 @@
-import { join, dirname } from 'path'
 import bcrypt from 'bcrypt'
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';

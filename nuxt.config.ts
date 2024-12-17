@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { execSync } from 'child_process'
 
-const rootDirectory = ''
+const rootDirectory = '/'
 export default defineNuxtConfig({
   ssr: true,
   app:{
@@ -29,8 +30,28 @@ export default defineNuxtConfig({
     ]
   },
   nitro: {
-    externals: {
-      trace: false
+    hooks: {
+      close: () => {
+        const platform = process.platform
+  
+        if (platform === 'win32') {
+          // Windows環境向けコマンド
+          // node_modulesを一時ディレクトリ(node_modules_temp)へコピー
+          execSync('robocopy .output\\server\\node_modules .output\\server\\node_modules_temp *.* /E || exit 0', { stdio: 'inherit' });
+          // 元のnode_modulesを削除
+          execSync('rmdir /S /Q .output\\server\\node_modules', { stdio: 'inherit' });
+          // 一時ディレクトリをnode_modulesにリネーム
+          execSync('move .output\\server\\node_modules_temp .output\\server\\node_modules', { stdio: 'inherit' });
+        } else if (platform === 'linux') {
+          // Linux(Ubuntu)環境向けコマンド
+          // node_modulesを一時ディレクトリ(node_modules_temp)へコピー
+          execSync('cp -rL .output/server/node_modules/ .output/server/node_modules_temp/', { stdio: 'inherit' })
+          // 元のnode_modulesを削除
+          execSync('rm -rf .output/server/node_modules/', { stdio: 'inherit' })
+          // 一時ディレクトリをnode_modulesにリネーム
+          execSync('mv .output/server/node_modules_temp/ .output/server/node_modules/', { stdio: 'inherit' })
+        }
+      }
     }
   }
 })
