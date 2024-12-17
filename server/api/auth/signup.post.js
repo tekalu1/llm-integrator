@@ -5,12 +5,12 @@ import { JSONFile } from 'lowdb/node';
 import { existsSync, mkdirSync } from 'fs'
 
 export default defineEventHandler(async (event) => {
-    const file = join(process.cwd(), 'server/db/auth.json')
-    const dir = dirname(file)
+    const dir = './server/db/'
+    const file = dir + 'auth.json'
 
     // ディレクトリが無ければ作成
     if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true })
+        mkdirSync(dir, { recursive: true })
     }
 
     const adapter = new JSONFile(file);
