@@ -27,5 +27,10 @@ export default defineNuxtConfig({
     dirs:[
       'composables/**'
     ]
+  },
+  nitro: {
+    externals: {
+      trace: false
+    }
   }
 })
