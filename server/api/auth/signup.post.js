@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node';
 import { existsSync, mkdirSync } from 'fs'

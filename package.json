@@ -19,7 +19,7 @@
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@pinia/nuxt": "^0.6.1",
     "@vue-flow/core": "^1.41.5",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "file-saver": "^2.0.5",
     "handsontable": "^14.6.1",
     "jsonwebtoken": "^9.0.2",
