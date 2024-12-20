@@ -1,5 +1,5 @@
 <template>
-  <div class=" z-10 py-2 w-full px-2  grid md:grid-cols-7 max-md:flex max-md:justify-center max-md:items-center h-20">
+  <div class=" z-10 py-2 w-full px-2  grid md:grid-cols-7 max-md:flex max-md:justify-center max-md:items-center h-16">
     <div class="col-span-2 flex items-center justify-start ml-2 text-[#842ff7] ">
       <AtomsCommonAppLogo />
     </div>
@@ -83,10 +83,20 @@
       </div>
     </div>
     <div class="col-span-2 flex items-center justify-end mr-2">
-      <button class="px-4 py-2 text-white rounded-xl font-bold border border-gray-300 bg-gradient-to-r from-[#6e7af8] from-5% via-[#6c56e4] via-30% to-[#842ff7] to-80% transition duration-300 hover:shadow-[0px_0px_12px_0px_rgb(255,255,255,1)]" >
-        公開する
-        <font-awesome-icon :icon="['fas', 'chevron-down']" />
-      </button>
+      <ClientOnly>
+        <AtomsCommonModalButton modal-possition-horizonal="right" >
+          <template v-slot:button >
+            <button class="px-4 py-2 text-white rounded-xl font-bold border border-gray-300 bg-gradient-to-r from-[#6e7af8] from-5% via-[#6c56e4] via-30% to-[#842ff7] to-80% transition duration-300 hover:shadow-[0px_0px_12px_0px_rgb(255,255,255,1)]" >
+              公開する
+              <font-awesome-icon :icon="['fas', 'chevron-down']" />
+            </button>
+          </template>
+          <template v-slot:modal >
+            <MoleculesHeaderPublish />
+          </template>
+        </AtomsCommonModalButton>
+
+      </ClientOnly>
       <ClientOnly>
         <AtomsCommonModalButton modal-possition-horizonal="right" >
           <template v-slot:button >

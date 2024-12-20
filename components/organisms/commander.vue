@@ -1,5 +1,5 @@
 <template>
-    <div class=" bg-white  border-gray-300 border  rounded-2xl py-1 px-2 flex justify-center items-center z-10 shadow-[4px_4px_24px_0px_rgb(0,0,0,0.2)] pointer-events-auto">
+    <div class=" bg-white border-gray-300 border rounded-2xl px-2 flex justify-center items-center z-10 shadow-[4px_4px_24px_0px_rgb(0,0,0,0.2)] pointer-events-auto">
       <button @click="APIExecution.runFlow(flowStore.masterFlow); uiStore.setItemDisplayMode(flowStore.masterFlow, 'result');" class="group overflow-hidden hover:bg-gray-100 rounded-xl transition-all duration-300 p-2 flex flex-col items-center justify-center" :class="APIExecution.isExecuting ? 'pointer-events-none text-gray-300':''">
         <div class="flex items-center justify-center px-4">
           <font-awesome-icon :icon="['fas', 'play']" class="mr-2" />

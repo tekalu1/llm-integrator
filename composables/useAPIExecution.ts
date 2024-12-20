@@ -4,162 +4,34 @@ import { type ExecutionResult, type FlowItem } from '~/types/item/flow';
 import { type ApiItem, type RequestParameter } from '~/types/item/api';
 import { type ConditionItem, type Condition } from '~/types/item/condition';
 import { type ScriptItem } from '~/types/item/script';
+import { transformEntriesArray, reverseTransformToRequestParameterArray } from '~/utils/common/jsonConverter'
+import { executeStep } from '~/utils/flow/execute';
+import { executeScript, executeScriptApiItem } from '~/utils/flow/script';
+import { processStream } from '~/utils/execute/processStream';
 
 export const useAPIExecution = defineStore('APIExecution', {
   state: () => ({
-    isExecuting: false
+    isExecuting: false,
+    latestExecutedFlowItemId: ''
   }),
   actions: {
     async executeStep (apiItem: ApiItem) {
-      console.log("apiItem", apiItem)
-      try {
-        const { data } = await useFetch('/api/execute-flow', {
-          method: 'POST',
-          body: {
-            apiItem
-          }
-        })
-        
-        return {
-          result: data.value,
-          error: "",
-        }
-      } catch (e: any) {
-        return {
-          result: {},
-          error: e.message
-        }
-      }
+      return executeStep(apiItem)
     },
     executeScriptApiItem(apiItem: ApiItem) {
       const flowStore = useFlowStore();
       const uiStore = useUiStore();
-      try {
-        const func = new Function('variables', 'result', apiItem.script);
-        if(apiItem.isScriptEnabled){
-          func(flowStore.masterFlow.variables,uiStore.executionResults[apiItem.id].slice(-1)[0]); // オブジェクトをスクリプトで操作
-        }
-      } catch (error) {
-        console.error('スクリプト実行エラー:', error);
-      }
+      executeScriptApiItem(apiItem, flowStore.masterFlow.variables, uiStore.executionResults[apiItem.id].slice(-1)[0])
     },
     executeScript(scriptItem: ScriptItem) {
       const flowStore = useFlowStore();
-      try {
-        const func = new Function('variables', scriptItem.script);
-        func(flowStore.masterFlow.variables); // オブジェクトをスクリプトで操作
-      } catch (error) {
-        console.error('スクリプト実行エラー:', error);
-      }
+      executeScript(scriptItem, flowStore.masterFlow.variables)
     },
     transformEntriesArray(requestParameters: any, parentType = 'object'): RequestParameter[]{
-      let result: RequestParameter[] = []
-      for(const key of Object.keys(requestParameters)){
-        if(this.getType(requestParameters[key]) === 'array'){
-          result.push({
-            key: key,
-            type: 'array',
-            value: null,
-            children: this.transformEntriesArray(requestParameters[key], 'array')
-          })
-        }else if(this.getType(requestParameters[key]) === 'object'){
-          if(parentType === 'array'){
-            // console.log("result before : " + result)
-            // console.log("requestParameters[key] : " + requestParameters[key])
-            // console.log("key : " + key)
-            if(requestParameters[key]){
-              result.push({
-                type: 'object',
-                value: null,
-                children: this.transformEntriesArray(requestParameters[key], 'array')
-              })
-            }else{
-              result.push({
-                key: key,
-                type: 'object',
-                value: null,
-                children: []
-              })
-            }
-            // console.log("result after : " + result)
-          }else{
-            if(requestParameters[key]){
-              result.push({
-                key: key,
-                type: 'object',
-                value: null,
-                children: this.transformEntriesArray(requestParameters[key])
-              })
-            }else{
-              result.push({
-                key: key,
-                type: 'object',
-                value: null,
-                children: []
-              })
-            }
-            
-          }
-        }else{
-          result.push({
-            key: key,
-            type: this.getType(requestParameters[key]),
-            value: requestParameters[key]
-          })
-        }
-      }
-      return result
-    },
-    getType(value: any): 'string' | 'number' | 'boolean' | 'object' | 'array' {
-        if (Array.isArray(value)) return 'array';
-        if (value === null) return 'object'; // nullはobject型として扱う
-        return typeof value as 'string' | 'number' | 'boolean' | 'object';
+      return transformEntriesArray(requestParameters, parentType)
     },
     reverseTransformToRequestParameterArray(params: RequestParameter[], parentType = 'object'): any {
-      // console.log("called reverseTransformToRequestParameterArray")
-      let result:any = {};
-      if(parentType === 'array'){
-        if(!Array.isArray(result)){
-          result = []
-        }
-      }
-
-      for (const param of params) {
-        if(!param.key){
-          if (param.children) {
-            if(param.children.length > 0){
-              result.push(this.reverseTransformToRequestParameterArray(param.children, param.type));
-            }else{
-              result = null
-            }
-          }else{
-            if(parentType === 'array'){
-              result.push(param.value)
-            }else{
-              result = param.value
-            }
-          }
-        }else{
-          if (param.children) {
-            if(parentType === 'array'){
-              result.push({[param.key]: this.reverseTransformToRequestParameterArray(param.children, param.type)});
-            }else{
-              if(param.children.length > 0){
-                result[param.key] = this.reverseTransformToRequestParameterArray(param.children, param.type);
-              }else{
-                result[param.key] = null
-              }
-            }
-          }else{
-            if(parentType === 'array'){
-              result.push({[param.key]: param.value})
-            }else{
-              result[param.key] = param.value
-            }
-          }
-        }
-      }
-      return result
+      return reverseTransformToRequestParameterArray(params, parentType)
     },
     async runFlow (flowItem: FlowItem) {
       const uiStore = useUiStore();
@@ -179,87 +51,57 @@ export const useAPIExecution = defineStore('APIExecution', {
         this.isExecuting = false; // 実行ステータスを解除
       }
     },
-    async callApi (flowItem: FlowItem | ApiItem | ConditionItem) {
+    controller: null as AbortController | null,
+    async callApi(flowItem: FlowItem | ApiItem | ConditionItem){
       const flowStore = useFlowStore();
       const uiStore = useUiStore();
-      const delay = (ms: number): Promise<void> => {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-      }
-      const startTime = Date.now();
-      if(!flowItem.isItemActive){
-        return
-      }
-      if(!this.isExecuting){
-        return
-      }
-      uiStore.setIsExecutedFlow(flowItem.id, 'In progress')
+      this.controller = new AbortController();
       try {
-        if(flowItem.type === 'condition' || flowItem.type === 'loop'){
-          if(!flowStore.evaluateCondition(flowItem.condition)){
-            uiStore.setIsExecutedFlow(flowItem.id, 'Done')
-            return
+        const response = await fetch('/api/execute/stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            flowItem: flowItem,
+            variables: flowStore.masterFlow.variables
+          }),
+          signal: this.controller.signal
+        });
+
+        if (!response.body) {
+          throw new Error('No response body');
+        }
+
+        // status.value = 'streaming';
+
+        const reader = response.body.getReader();
+
+        // 汎用処理関数を使用
+        await processStream(reader, (jsonData) => {
+          console.log('Received:', jsonData);
+          if(jsonData.executionResult){
+            uiStore.setExecutionResults(jsonData.id,jsonData.executionResult)
           }
-        }
-        if(flowItem.type === 'api'){
-          let stepConverted: ApiItem = JSON.parse(JSON.stringify(flowItem))
-          stepConverted.headers = flowStore.applyFlowVariables(this.reverseTransformToRequestParameterArray(flowItem.headers),flowItem)
-          stepConverted.endpoint = flowStore.applyFlowVariablesOnString(flowItem.endpoint,flowItem)
-          stepConverted.body = flowStore.applyFlowVariables(this.reverseTransformToRequestParameterArray(flowItem.body),flowItem)
-          console.log(stepConverted)
-          const result = await this.executeStep(stepConverted); // 個別ステップをサーバーに送信
-          if (result && result.result) {
-            const executionResult: ExecutionResult = {
-              id: uuidv4(),
-              success: result.result.success,
-              data: result.result.data ? result.result.data : {},
-              error: result.result.error ? result.result.error : null,
-              executionDate: startTime,
-              duration: Date.now() - startTime
-            } 
-            uiStore.setExecutionResults(flowItem.id,executionResult)
-            this.executeScriptApiItem(flowItem)
+          if(jsonData.variables){
+            flowStore.masterFlow.variables = jsonData.variables
           }
-          console.log("result : ")
-          console.log(result)
-          console.log(result.result.success)
-          if (!result.result.success) {
-              // error.value = `ステップ ${step.id} でエラーが発生しました: ${result.error}`;
-              throw new Error(`ステップ ${flowItem.id} でエラーが発生しました: ${result.error}`);
+          if(jsonData.status){
+            uiStore.setIsExecutedFlow(jsonData.id, jsonData.status)
+            this.latestExecutedFlowItemId = jsonData.id
           }
-        }
-        
-        if(flowItem.type === 'script'){
-          this.executeScript(flowItem)
-        }
-        if(flowItem.flowItems.length > 0){
-          for (const item of flowItem.flowItems) {
-            await this.callApi(item); // 子ステップを実行
-          }
-        }
-        if(flowItem.type === 'loop'){
-          console.log("flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition) : ",flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition))
-          if(flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition)){
-            await delay(200)
-            await this.callApi(JSON.parse(JSON.stringify(flowItem)))
-          }
-        }
-        if(flowItem.type === 'end'){
-          this.isExecuting = false
-        }
-        
-        if(flowItem.type === 'wait'){
-          await delay(flowItem.waitTime)
-        }
-        uiStore.setIsExecutedFlow(flowItem.id, 'Done')
-      } catch (e: any) {
-          // error.value = `予期しないエラーが発生しました: ${e.message}`;
-          console.log("error : " + e.message)
-          uiStore.setIsExecutedFlow(flowItem.id, 'Done')
-          throw e;
+        });
+        this.isExecuting = false
+      } catch (error: any) {
+        console.error('Streaming error:', error);
+        this.isExecuting = false
       }
     },
     stopFlow () {
-      this.isExecuting = false;
+      const uiStore = useUiStore();
+      if (this.controller) {
+        this.controller.abort();
+        uiStore.setIsExecutedFlow(this.latestExecutedFlowItemId, 'Done')
+        this.isExecuting = false;
+      }
     }
   }
 });

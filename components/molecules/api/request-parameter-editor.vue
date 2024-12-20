@@ -1,5 +1,5 @@
 <template>
-    <div class="pl-4 border-l-2 border-[#842ff7] py-[2px] w-full">
+    <div class="pl-4 border-l-2 border-[#842ff7] w-full">
       <div class="grid grid-cols-12 gap-2 w-full">
         <input
           v-model="parameter.key"

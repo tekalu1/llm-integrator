@@ -16,7 +16,7 @@
     <div class="relative flex-grow w-full">
       <slot  />
     </div>
-    <div class="absolute bottom-10 left-0 w-full flex items-center justify-center pointer-events-none">
+    <div class="absolute bottom-[2%] left-0 w-full flex items-center justify-center pointer-events-none">
       <OrganismsCommander />
     </div>
   </div>

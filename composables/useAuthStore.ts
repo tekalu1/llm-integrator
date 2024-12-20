@@ -37,7 +37,8 @@ export const useAuthStore = defineStore('authStore', {
         this.user = null
       }
     },
-    isLoggedIn(){
+    async isLoggedIn(){
+      await this.fetchUser()
       return !!this.user
     }
   }

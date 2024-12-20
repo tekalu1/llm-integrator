@@ -41,3 +41,5 @@ export type SavedFlowItem = {
 
 
 export type DisplayStatus = 'flow' | 'history' | 'result'
+
+export type Variables = {[key: string]: string}
