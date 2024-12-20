@@ -52,7 +52,7 @@ export const useAPIExecution = defineStore('APIExecution', {
       }
     },
     controller: null as AbortController | null,
-    async callApi(flowItem: FlowItem | ApiItem | ConditionItem){
+    async callApiByServer(flowItem: FlowItem | ApiItem | ConditionItem){
       const flowStore = useFlowStore();
       const uiStore = useUiStore();
       this.controller = new AbortController();
@@ -95,13 +95,95 @@ export const useAPIExecution = defineStore('APIExecution', {
         this.isExecuting = false
       }
     },
-    stopFlow () {
+    stopFlowByServer () {
       const uiStore = useUiStore();
       if (this.controller) {
         this.controller.abort();
         uiStore.setIsExecutedFlow(this.latestExecutedFlowItemId, 'Done')
         this.isExecuting = false;
       }
+    },
+    async callApi (flowItem: FlowItem | ApiItem | ConditionItem) {
+      const flowStore = useFlowStore();
+      const uiStore = useUiStore();
+      const delay = (ms: number): Promise<void> => {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+      const startTime = Date.now();
+      if(!flowItem.isItemActive){
+        return
+      }
+      if(!this.isExecuting){
+        return
+      }
+      uiStore.setIsExecutedFlow(flowItem.id, 'In progress')
+      try {
+        if(flowItem.type === 'condition' || flowItem.type === 'loop'){
+          if(!flowStore.evaluateCondition(flowItem.condition)){
+            uiStore.setIsExecutedFlow(flowItem.id, 'Done')
+            return
+          }
+        }
+        if(flowItem.type === 'api'){
+          let stepConverted: ApiItem = JSON.parse(JSON.stringify(flowItem))
+          stepConverted.headers = flowStore.applyFlowVariables(this.reverseTransformToRequestParameterArray(flowItem.headers),flowItem)
+          stepConverted.endpoint = flowStore.applyFlowVariablesOnString(flowItem.endpoint,flowItem)
+          stepConverted.body = flowStore.applyFlowVariables(this.reverseTransformToRequestParameterArray(flowItem.body),flowItem)
+          console.log(stepConverted)
+          const result = await this.executeStep(stepConverted); // 個別ステップをサーバーに送信
+          if (result && result.result) {
+            const executionResult: ExecutionResult = {
+              id: uuidv4(),
+              success: result.result.success,
+              data: result.result.data ? result.result.data : {},
+              error: result.result.error ? result.result.error : null,
+              executionDate: startTime,
+              duration: Date.now() - startTime
+            } 
+            uiStore.setExecutionResults(flowItem.id,executionResult)
+            this.executeScriptApiItem(flowItem)
+          }
+          console.log("result : ")
+          console.log(result)
+          console.log(result.result.success)
+          if (!result.result.success) {
+              // error.value = `ステップ ${step.id} でエラーが発生しました: ${result.error}`;
+              throw new Error(`ステップ ${flowItem.id} でエラーが発生しました: ${result.error}`);
+          }
+        }
+        
+        if(flowItem.type === 'script'){
+          this.executeScript(flowItem)
+        }
+        if(flowItem.flowItems.length > 0){
+          for (const item of flowItem.flowItems) {
+            await this.callApi(item); // 子ステップを実行
+          }
+        }
+        if(flowItem.type === 'loop'){
+          console.log("flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition) : ",flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition))
+          if(flowItem.loopType === 'while' && flowStore.evaluateCondition(flowItem.condition)){
+            await delay(200)
+            await this.callApi(JSON.parse(JSON.stringify(flowItem)))
+          }
+        }
+        if(flowItem.type === 'end'){
+          this.isExecuting = false
+        }
+        
+        if(flowItem.type === 'wait'){
+          await delay(flowItem.waitTime)
+        }
+        uiStore.setIsExecutedFlow(flowItem.id, 'Done')
+      } catch (e: any) {
+          // error.value = `予期しないエラーが発生しました: ${e.message}`;
+          console.log("error : " + e.message)
+          uiStore.setIsExecutedFlow(flowItem.id, 'Done')
+          throw e;
+      }
+    },
+    stopFlow () {
+      this.isExecuting = false;
     }
   }
 });
