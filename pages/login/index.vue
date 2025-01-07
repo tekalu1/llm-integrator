@@ -40,10 +40,11 @@
     const password = ref('')
     const error = ref(null)
 
-    onMounted(() =>{
-        // if(authStore.isLoggedIn()){
-        // window.location.href = '/'
-        // }
+    onMounted(async () =>{
+        const isLoggedIn = await authStore.isLoggedIn()
+        if(isLoggedIn){
+            window.location.href = '/'
+        }
     })
     
     const onSubmit = async () => {
@@ -60,9 +61,14 @@
         }
         // ログイン成功後、ユーザー情報を取得
         await authStore.fetchUser()
-        navigateTo('/')
+        const isLoggedIn =  await authStore.isLoggedIn()
+        if(isLoggedIn){
+            navigateTo('/')
+        }else{
+            throw new Error('ユーザー名またはパスワードが異なります');
+        }
         } catch (e) {
-        error.value = 'An error occurred'
+            error.value = e.message ? e.message : 'An error occurred'
         }
     }
   </script>

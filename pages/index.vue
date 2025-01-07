@@ -1,5 +1,5 @@
 <template>
-  <div v-if="authStore.isLoggedIn()" class="flex items-start justify-center w-full h-full  text-[#183153]">
+  <div v-if="isLoggedIn" class="flex items-start justify-center w-full h-full  text-[#183153]">
     <OrganismsFlowView v-if="uiStore.getViewMode() === 'Flow'" :flowItem="flowStore.masterFlow" />
     <div v-show="uiStore.getViewMode() === 'Laboratory'" class="flex items-start justify-center w-full h-full ">
       <div class="max-xl:w-[50vw] xl:w-[25vw] h-full">
@@ -13,7 +13,6 @@
         </AtomsCommonCoolScrollBarContainer>
       </div>
     </div>
-    
   </div>
 </template>
   
@@ -22,13 +21,11 @@
   const uiStore = useUiStore();
   const authStore = useAuthStore()
 
-  await authStore.fetchUser()
+  const isLoggedIn = await authStore.isLoggedIn()
 
-  onBeforeMount(() => {
-  })
 
   onMounted(async() => {
-    if(!authStore.isLoggedIn()){
+    if(!isLoggedIn){
       window.location.href = '/login'
     }
   })

@@ -1,23 +1,22 @@
 <template>
-    <div class="fixed bottom-4 right-4 space-y-2">
-      <div
-        v-for="message in messageQueue"
-        :key="message.id"
-        :class="getClass(message.type)"
-        class="p-4 rounded shadow"
-      >
-        <p>{{ message.content }}</p>
-        <button @click="removeMessage(message.id)" class="mt-2 underline">
-          閉じる
-        </button>
+      <div class="space-y-2 mb-2">
+        <div
+          v-for="message in messageQueue.messageQueue"
+          :key="message.id"
+          :class="getClass(message.type)"
+          class="p-4 rounded-lg shadow transition-all duration-300 fade-in-out flex items-center justify-center"
+        >
+          <p>{{ message.content }}</p>
+          <button @click="messageQueue.removeMessage(message.id)" class="underline h-full flex items-center justify-start ml-2">
+            <font-awesome-icon class="hover:opacity-50 transition-all duration-300 cursor-pointer"
+                :icon="['fas', 'xmark']" />
+          </button>
+        </div>
       </div>
-    </div>
   </template>
   
   <script setup lang="ts">
-  import { useMessageQueue } from '~/composables/useMessageQueue';
-  
-  const { messageQueue, removeMessage } = useMessageQueue();
+  const messageQueue = useMessageQueue();
   
   // メッセージタイプごとにクラスを切り替える
   function getClass(type: 'error' | 'success' | 'info' | 'warning') {
@@ -35,6 +34,24 @@
   </script>
   
   <style scoped>
-  /* 必要に応じてスタイルをカスタマイズ */
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+      }
+      5% {
+        opacity: 1;
+      }
+      95% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    .fade-in-out {
+      animation: fadeInOut 5s ease-in-out forwards; /* 5秒間のアニメーション */
+    }
+
+
   </style>
   

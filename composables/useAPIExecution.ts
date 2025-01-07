@@ -147,8 +147,8 @@ export const useAPIExecution = defineStore('APIExecution', {
           console.log(result)
           console.log(result.result.success)
           if (!result.result.success) {
-              // error.value = `ステップ ${step.id} でエラーが発生しました: ${result.error}`;
-              throw new Error(`ステップ ${flowItem.id} でエラーが発生しました: ${result.error}`);
+              useMessageQueue().addMessage('error',`ステップ ${flowItem.name? flowItem.name:'Untitled'} でエラーが発生しました: ${result.error}`)
+              throw new Error(`ステップ ${flowItem.name? flowItem.name:'Untitled'} でエラーが発生しました: ${result.error}`);
           }
         }
         

@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('authStore', {
           method: 'GET',
           credentials: 'include'
         })
-        console.log(JSON.stringify(data.value))
+        // console.log(JSON.stringify(data.value))
         if (error.value) {
           this.user = null
         } else {

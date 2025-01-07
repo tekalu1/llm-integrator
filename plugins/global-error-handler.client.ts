@@ -1,15 +1,14 @@
 import { useMessageQueue } from '~/composables/useMessageQueue';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const { addMessage } = useMessageQueue();
 
   // Vueコンポーネント内で発生するエラーをキャッチ
   nuxtApp.vueApp.config.errorHandler = (err, vm, info) => {
     console.error('Vueエラー:', err, info);
     if (err instanceof Error) {
-      addMessage('error', `Vueエラー: ${err.message}`);
+      useMessageQueue().addMessage('error', `Vueエラー: ${err.message}`);
     } else {
-      addMessage('error', `Vueエラー: ${String(err)}`);
+      useMessageQueue().addMessage('error', `Vueエラー: ${String(err)}`);
     }
   };
 
@@ -17,9 +16,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   window.addEventListener('unhandledrejection', (event) => {
     console.error('未処理のPromiseエラー:', event.reason);
     if (event.reason instanceof Error) {
-      addMessage('error', `Promiseエラー: ${event.reason.message}`);
+      useMessageQueue().addMessage('error', `Promiseエラー: ${event.reason.message}`);
     } else {
-      addMessage('error', `Promiseエラー: ${String(event.reason)}`);
+      useMessageQueue().addMessage('error', `Promiseエラー: ${String(event.reason)}`);
     }
   });
 
@@ -27,12 +26,17 @@ export default defineNuxtPlugin((nuxtApp) => {
   window.onerror = (message, source, lineno, colno, error) => {
     console.error('グローバルエラー:', message, source, lineno, colno, error);
     if (error instanceof Error) {
-      addMessage('error', `グローバルエラー: ${error.message}`);
+      useMessageQueue().addMessage('error', `グローバルエラー: ${error.message}`);
     } else {
-      addMessage(
+      useMessageQueue().addMessage(
         'error',
         `グローバルエラー: ${String(message)} (${source}:${lineno}:${colno})`
       );
     }
   };
+
+
+  nuxtApp.hook('app:error', (error) => {
+    useMessageQueue().addMessage('error', error.message || 'An unknown error occurred');
+  })
 });
