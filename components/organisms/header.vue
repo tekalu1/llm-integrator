@@ -84,17 +84,7 @@
     </div>
     <div class="col-span-2 flex items-center justify-end mr-2">
       <ClientOnly>
-        <AtomsCommonModalButton modal-possition-horizonal="right" >
-          <template v-slot:button >
-            <button class="px-4 py-2 text-white rounded-xl font-bold border border-gray-300 bg-gradient-to-r from-[#6e7af8] from-5% via-[#6c56e4] via-30% to-[#842ff7] to-80% transition duration-300 hover:shadow-[0px_0px_12px_0px_rgb(255,255,255,1)]" >
-              公開する
-              <font-awesome-icon :icon="['fas', 'chevron-down']" />
-            </button>
-          </template>
-          <template v-slot:modal >
-            <MoleculesHeaderPublish />
-          </template>
-        </AtomsCommonModalButton>
+        <MoleculesHeaderPublish />
 
       </ClientOnly>
       <ClientOnly>

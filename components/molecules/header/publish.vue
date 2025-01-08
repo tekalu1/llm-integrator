@@ -4,6 +4,7 @@ const authStore = useAuthStore()
 const url = useRequestURL()
 
 const status = ref('')
+const isFlowRegistered = ref(false)
 
 const responseRegister = ref()
 const responseExecute = ref()
@@ -58,7 +59,6 @@ const publish = async () => {
         headers: { 'Content-Type': 'application/json' }
       });
       responseExecute.value = data
-      console.log(JSON.stringify(data))
       // if (!responseExecute.value.body) {
       //   throw new Error('No response body');
       // }
@@ -83,29 +83,54 @@ const publish = async () => {
   }
 };
 
+const existCheck = async () => {
+  await authStore.fetchUser()
+  const { data, error} = await useFetch('/api/publish-flow/exist-check/' + authStore.user.id + '/' + flowStore.masterFlow.id, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  console.log("aaaa dataz : " + JSON.stringify(data.value.success))
+  if(data.value.success){
+    isFlowRegistered.value = true
+  }else{
+    isFlowRegistered.value = false
+  }
+}
+
 
 onMounted(async () => {
-  
+  await existCheck()
 });
 </script>
 
 <template>
-  <button @click="register" class="border border-gray-200 hover:border-[#842ff7] transition-all duration-200 rounded-2xl px-2 py-1 mb-2" >
-      登録
-  </button>
-  <div class="mb-8 max-w-96">
-    <p>
-      エンドポイント
-    </p>
-    
-    <p v-if="authStore.user" >
-      {{ url.protocol + '//' + url.host + '/api/publish-flow/execute/' + authStore.user.id + '/' + flowStore.masterFlow.id }}
-    </p>
-  </div>
-  <button @click="publish" class="border border-gray-200 hover:border-[#842ff7] transition-all duration-200 rounded-2xl px-2 py-1 mb-2" >
-      テスト実行
-  </button>
-  <div class="h-96 overflow-auto border w-96">
-      {{ JSON.stringify(responseExecute) }}
-  </div>
+  
+  <AtomsCommonModalButton modal-possition-horizonal="right" >
+    <template v-slot:button >
+      <button @click="existCheck()" class="px-4 py-2 text-white rounded-xl font-bold border border-gray-300 bg-gradient-to-r from-[#6e7af8] from-5% via-[#6c56e4] via-30% to-[#842ff7] to-80% transition duration-300 hover:shadow-[0px_0px_12px_0px_rgb(255,255,255,1)]" >
+        公開する
+        <font-awesome-icon :icon="['fas', 'chevron-down']" />
+      </button>
+    </template>
+    <template v-slot:modal >
+      <button @click="register" v-if="!isFlowRegistered" class="border border-gray-200 hover:border-[#842ff7] transition-all duration-200 rounded-2xl px-2 py-1 mb-2" >
+          登録
+      </button>
+      <div v-if="isFlowRegistered" class="mb-8 max-w-96">
+        <p>
+          エンドポイント
+        </p>
+        
+        <p v-if="authStore.user" >
+          {{ url.protocol + '//' + url.host + '/api/publish-flow/execute/' + authStore.user.id + '/' + flowStore.masterFlow.id }}
+        </p>
+      </div>
+      <button @click="publish" v-if="isFlowRegistered" class="border border-gray-200 hover:border-[#842ff7] transition-all duration-200 rounded-2xl px-2 py-1 mb-2" >
+          テスト実行
+      </button>
+      <div class="overflow-auto border w-96">
+          {{ JSON.stringify(responseExecute) }}
+      </div>
+    </template>
+  </AtomsCommonModalButton>
 </template>
