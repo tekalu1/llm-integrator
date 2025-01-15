@@ -17,7 +17,8 @@ export const useUiStore = defineStore('uiStore', {
     } as ExecutionResultV2,
     isExecutedFlow: {} as IsExecutedFlow,
     sideMenuStatus: 'Flow List' as SideMenuStatus,
-    viewMode: 'Laboratory' as ViewMode
+    viewMode: 'Laboratory' as ViewMode,
+    isGenerating: {}
   }),
   actions: {
     getEditModeStatus(flowId: string): string{
@@ -79,5 +80,14 @@ export const useUiStore = defineStore('uiStore', {
     setViewMode(mode: ViewMode) {
       this.viewMode = mode
     },
+    getIsGenerating(flowId: string): boolean{
+      if(!this.isGenerating[flowId]){
+        this.isGenerating[flowId] = false
+      }
+      return this.isGenerating[flowId]
+    },
+    setIsGenerating(flowId: string, isGenerating: boolean): void{
+      this.isGenerating[flowId] = isGenerating
+    }
   }
 });

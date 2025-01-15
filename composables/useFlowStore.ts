@@ -105,7 +105,25 @@ export const useFlowStore = defineStore('flowStore', {
     {
       this.addFlowItem(parentItems, newflowItem)
     },
-    removeFlowItemById(targetId: string, setParentItem: boolean, parentItems: FlowItem[]) {
+    changeFlowItemById(targetId: string, newFlowItem: FlowItem, setParentItem: boolean = false, parentItems: FlowItem[] = []) {
+      let parentItemsTemp: FlowItem[]
+      if(setParentItem){
+        parentItemsTemp = parentItems
+      }else{
+        parentItemsTemp = this.masterFlow.flowItems
+      }
+      parentItemsTemp.forEach((flowItem, index) => 
+        {
+          if(flowItem.id == targetId){
+            parentItemsTemp[index] = newFlowItem
+            return
+          }else{
+            this.changeFlowItemById(targetId, newFlowItem, true, flowItem.flowItems)
+          }
+        }
+      )
+    },
+    removeFlowItemById(targetId: string, setParentItem: boolean = false, parentItems: FlowItem[] = []) {
       let parentItemsTemp =  this.masterFlow.flowItems
       if(setParentItem){
         parentItemsTemp = parentItems
@@ -288,6 +306,30 @@ export const useFlowStore = defineStore('flowStore', {
     evaluateConditionReturnByConditionValue(condition: Condition): ConditionValue {
       return evaluateConditionReturnByConditionValue(this.applyFlowVariables(condition))
     },
+    isApiTokenRegistered(): boolean{
+      if ("generativeAiApiToken" in this.masterFlow.variables) {
+        return true
+      }
+      return false
+    },
+    async generateFlowItem(prompt: string){
+      if(!this.isApiTokenRegistered()){
+        throw new Error('The API token does not exist');
+      }
+      
+      const { data, status, error, refresh, clear } = await useFetch('/api/gen-ai/execute', {
+          method: 'POST',
+          body: {
+            "prompt": prompt, 
+            "token": this.masterFlow.variables["generativeAiApiToken"]
+          },
+          credentials: 'include'
+      })
+      if(error.value) {
+        throw new Error('API error: ' + error.value);
+      }
+      return data
+    }
     // setupWatcher() {
     //   watch(
     //     () => this.masterFlow,

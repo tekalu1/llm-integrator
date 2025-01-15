@@ -89,7 +89,6 @@ const existCheck = async () => {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   });
-  console.log("aaaa dataz : " + JSON.stringify(data.value.success))
   if(data.value.success){
     isFlowRegistered.value = true
   }else{
