@@ -1,56 +1,61 @@
 <script setup lang="ts">
-import { v4 as uuidv4 } from 'uuid';
-const props = defineProps({
-    modalPossition: {
-        type: String,
-        default: "bottom",
-    },
-    bgColor: {
-        type: String,
-        default: "white",
-    },
-    bgOpacity: {
-        type: String,
-        default: "100",
-    },
-    buttonColor: {
-        type: String,
-        default: "[#842ff7]",
-    },
-    borderThickness : {
-        type: String,
-        default: null,
-    },
-    borderColor: {
-        type: String,
-        default: null,
-    },
-})
+    import { v4 as uuidv4 } from 'uuid';
+    const props = defineProps({
+        modalPossition: {
+            type: String,
+            default: "bottom",
+        },
+        bgColor: {
+            type: String,
+            default: "white",
+        },
+        bgOpacity: {
+            type: String,
+            default: "100",
+        },
+        buttonColor: {
+            type: String,
+            default: "[#842ff7]",
+        },
+        borderThickness : {
+            type: String,
+            default: null,
+        },
+        borderColor: {
+            type: String,
+            default: null,
+        },
+    })
 
-const element = ref<HTMLElement | null>(null);
-const visibility = ref(false)
-const changeVisibility = () => {
-    visibility.value = !visibility.value
-}
-const openMenu = () => {
-    visibility.value = true
-}
-
-const closeMenu = () => {
-    visibility.value = false
-}
-const floatingElementChildTop = ref(0)
-const floatingElementChildLeft = ref(0)
-
-const setReleaseWrapperHeight = () => {
-    try{
-        const rect = element.value.getBoundingClientRect(); // 現在の位置を取得
-        floatingElementChildTop.value = rect.top;
-        floatingElementChildLeft.value = rect.left;
-    }catch(e){
-        console.error(e)
+    const element = ref<HTMLElement | null>(null);
+    const visibility = ref(false)
+    const changeVisibility = () => {
+        visibility.value = !visibility.value
     }
-  }
+    const openMenu = () => {
+        visibility.value = true
+    }
+
+    const closeMenu = () => {
+        visibility.value = false
+    }
+    const floatingElementChildTop = ref(0)
+    const floatingElementChildLeft = ref(0)
+
+    const setReleaseWrapperHeight = () => {
+        try{
+            const rect = element.value.getBoundingClientRect(); // 現在の位置を取得
+            floatingElementChildTop.value = rect.top;
+            floatingElementChildLeft.value = rect.left;
+        }catch(e){
+            console.error(e)
+        }
+    }
+    
+    defineExpose({
+        changeVisibility,
+    });
+
 </script>
 
 <template>

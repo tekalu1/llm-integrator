@@ -24,14 +24,14 @@
                     class="px-2 focus:bg-white duration-300 transition-all bg-transparent rounded-md border-gray-300 outline-none w-full" 
                   />
                 </div>
-                <AtomsCommonModalButton class="" >
+                <AtomsCommonModalButton ref="modalButton" >
                   <template v-slot:button>
                     <button class="rounded-md mr-1 hover:bg-gray-200 px-1 transition-all duration-150 ">
                       <font-awesome-icon :icon="['fas', 'plus']" class="" />
                     </button>
                   </template>
                   <template v-slot:modal>
-                    <MoleculesFlowAddItemMenu :flow-item="flowItemChild" />
+                    <MoleculesFlowAddItemMenu :flow-item="flowItemChild" @click="closeModal" />
                   </template>
                 </AtomsCommonModalButton>
                 <button class="flex items-center justify-center mr-1 hover:bg-gray-200 p-1 rounded-md transition-all duration-150" @click="flowStore.duplicateFlowItem(flowItem,flowItemChild)">
@@ -62,5 +62,13 @@ import { type FlowItem } from '~/types/item/flow';
   const flowStore = useFlowStore();
 
 
+  const modalButton = ref<HTMLElement | null>(null);
+
+  function closeModal() {
+      if (modalButton.value) {
+        console.log(JSON.stringify(modalButton.value))
+        modalButton.value.changeVisibility(); // 子コンポーネントのメソッドを実行
+      }
+  }
 
 </script> 

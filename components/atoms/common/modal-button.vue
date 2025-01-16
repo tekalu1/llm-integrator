@@ -29,6 +29,10 @@
             type: String,
             default: null,
         },
+        closeOnClick: {
+            type: Boolean,
+            default: true,
+        },
     })
 
     const element = ref<HTMLElement | null>(null);
@@ -37,6 +41,13 @@
     const visibility = ref(false)
     const changeVisibility = () => {
         visibility.value = !visibility.value
+    }
+
+    const changeVisibilityOnModal = () => {
+        if(props.closeOnClick){
+            visibility.value = !visibility.value
+
+        }
     }
 
     const floatingElementChildTop = ref(0)
@@ -76,6 +87,10 @@
             return buttonRight.value - contentWidth.value
         }
     })
+
+    defineExpose({
+        changeVisibility,
+    });
 </script>
 
 <template>
@@ -87,7 +102,7 @@
             <div class="fixed left-0 top-0 items-center w-full h-full z-10"
                 @click="changeVisibility">
             </div>
-            <div class=" p-1 rounded-md overflow-hidden shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)] z-20" :style="{top: getTop + 'px', left: getLeft + 'px', position: 'fixed'}"  :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor"  @click="changeVisibility">
+            <div class=" p-1 rounded-md overflow-hidden shadow-[1px_1px_3px_0px_rgb(0,0,0,0.1)] z-20" :style="{top: getTop + 'px', left: getLeft + 'px', position: 'fixed'}"  :class="'bg-' + bgColor + ' bg-opacity-' + bgOpacity + ' border-' + borderThickness + ' border-' + borderColor" @click="changeVisibilityOnModal" >
                 <div class="flex flex-col " ref="content" >
                     <slot name="modal" />
                 </div>

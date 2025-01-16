@@ -8,7 +8,7 @@
       <div v-else>
         <input v-model="condition.leftSide.value" class="outline-none" placeholder="値を入力してください" />
       </div>
-      <AtomsCommonModalButton >
+      <AtomsCommonModalButton>
         <template v-slot:button >
           <button class=" hover:bg-gray-400 px-[6px] py-1 rounded-md transition-all duration-150 flex items-center justify-center">
             <p class="mr-1">
@@ -17,7 +17,7 @@
             <font-awesome-icon :icon="['fas', 'chevron-down']" />
           </button>
         </template>
-        <template v-slot:modal >
+        <template v-slot:modal>
           <div class="bg-white rounded-md flex flex-col items-start justify-center">
             <button @click="flowStore.changeConditionType(condition, 'condition', 'left')" class="px-2 py-2  hover:bg-gray-200 rounded-lg mr-2 flex justify-start items-center transition-all duration-300 w-full">
               <p class="max-xl:hidden ml-2">
@@ -63,7 +63,7 @@
       <div v-else>
         <input v-model="condition.rightSide.value" class="outline-none" placeholder="値を入力してください" />
       </div>
-      <AtomsCommonModalButton >
+      <AtomsCommonModalButton>
         <template v-slot:button >
           <button class=" hover:bg-gray-400 px-[6px] py-1 rounded-md transition-all duration-150 flex items-center justify-center">
             <p class="mr-1">
@@ -72,8 +72,8 @@
             <font-awesome-icon :icon="['fas', 'chevron-down']" />
           </button>
         </template>
-        <template v-slot:modal >
-          <div class="bg-white rounded-md flex flex-col items-start justify-center">
+        <template v-slot:modal>
+          <div class="bg-white rounded-md flex flex-col items-start justify-center" >
             <button @click="flowStore.changeConditionType(condition, 'condition', 'right')" class="px-2 py-2  hover:bg-gray-200 rounded-lg mr-2 flex justify-start items-center transition-all duration-300 w-full">
               <p class="max-xl:hidden ml-2">
                 条件分岐をネスト

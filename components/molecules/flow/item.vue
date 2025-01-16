@@ -11,13 +11,15 @@
     }
   });
 
-  const modalwindow = ref<HTMLElement | null>(null);
+  const modalButton = ref<HTMLElement | null>(null);
+  const addItemModalButton = ref<HTMLElement | null>(null);
 
-  function closeModal() {
-      if (modalwindow.value) {
-          modalwindow.value.changeVisibility(); // 子コンポーネントのメソッドを実行
+  function closeModal(modalElement: HTMLElement | null) {
+      if (modalElement) {
+        modalElement.changeVisibility(); // 子コンポーネントのメソッドを実行
       }
   }
+
   const userPrompt = ref('')
 
   const promptApi = computed(()=>{
@@ -104,22 +106,33 @@
         
     `
   })
+  
+  const apiToken = ref('')
+  const registerApiToken = () => {
+    flowStore.masterFlow.variables['generativeAiApiToken'] = apiToken.value
+  }
 
     const onGenerateFlowButtonClicked = async () => {
       uiStore.setIsGenerating(props.flowItem.id, true)
-      if(props.flowItem.type === 'api'){
-        console.log(promptApi.value)
-        const getGenaratedDataByAi = await flowStore.generateFlowItem(promptApi.value)
-        console.log(JSON.stringify(getGenaratedDataByAi))
-        flowStore.changeFlowItemById(props.flowItem.id, JSON.parse(getGenaratedDataByAi.value?.choices[0].message?.content))
-      }else if(props.flowItem.type === 'script'){
-        console.log(promptScript.value)
-        const getGenaratedDataByAi = await flowStore.generateFlowItem(promptScript.value)
-        console.log(JSON.stringify(getGenaratedDataByAi))
-        flowStore.changeFlowItemById(props.flowItem.id, JSON.parse(getGenaratedDataByAi.value?.choices[0].message?.content))
-        
+      try{
+        if(props.flowItem.type === 'api'){
+          console.log(promptApi.value)
+          const getGenaratedDataByAi = await flowStore.generateFlowItem(promptApi.value)
+          console.log(JSON.stringify(getGenaratedDataByAi))
+          flowStore.changeFlowItemById(props.flowItem.id, JSON.parse(getGenaratedDataByAi.value?.choices[0].message?.content))
+        }else if(props.flowItem.type === 'script'){
+          console.log(promptScript.value)
+          const getGenaratedDataByAi = await flowStore.generateFlowItem(promptScript.value)
+          console.log(JSON.stringify(getGenaratedDataByAi))
+          flowStore.changeFlowItemById(props.flowItem.id, JSON.parse(getGenaratedDataByAi.value?.choices[0].message?.content))
+          
+        }
+
+      }catch(e){
+        throw new Error(e.message);
+      }finally{
+        uiStore.setIsGenerating(props.flowItem.id, false)
       }
-      uiStore.setIsGenerating(props.flowItem.id, false)
     }
     
 
@@ -139,19 +152,30 @@
             />
           </div>
           <div>
-            <AtomsCommonModalWindow ref="modalwindow">
+            <AtomsCommonModalButton ref="modalButton" :close-on-click="false" :modal-possition-horizonal="'right'">
               <template #modal>
-                <div class="flex flex-col items-center justify-center text-xs">
+                <div v-if="flowStore.isApiTokenRegistered()" class="flex flex-col items-center justify-center text-xs px-2 py-1 w-64">
                   <h1 class="mb-2">
-                    {{ `${flowItem.type} アイテムを自動生成します`  }}
+                    <!-- {{ `${flowItem.type} アイテムを自動生成します`  }} -->
                   </h1>
-                  <textarea v-model="userPrompt" class="outline-none border rounded-sm mb-2 w-full" placeholder="指示を入力してください">
+                  <textarea v-model="userPrompt" class="outline-none border rounded-sm mb-2 w-full border-none resize-none hover:resize-y" :style="{fieldSizing: 'content'}" placeholder="指示を入力してください">
                   </textarea>
-                  <AtomsCommonButton @click="[onGenerateFlowButtonClicked(),closeModal()]">
+                  <AtomsCommonButton @click="[onGenerateFlowButtonClicked(),closeModal(modalButton)]">
                     <font-awesome-icon :icon="['fas', 'wand-sparkles']" />
                     生成
                   </AtomsCommonButton>
 
+                </div>
+                <div v-else class="flex flex-col items-start justify-center px-2 py-1 w-64">
+                  <p class="mb-2">
+                    Open AIのAPI Tokenを登録してください
+                  </p>
+                  <input placeholder="API Token" v-model="apiToken" class="mb-2 px-2 outline-none" />
+                  <div class="w-full flex justify-center items-center">
+                    <AtomsCommonButton @click="[registerApiToken()]">
+                      登録
+                    </AtomsCommonButton>
+                  </div>
                 </div>
               </template>
               <template #button>
@@ -160,7 +184,7 @@
                   生成
                 </AtomsCommonButton>
               </template>
-            </AtomsCommonModalWindow>
+            </AtomsCommonModalButton>
           </div>
           <!-- 実行ボタン -->
           <div class="pr-2 py-1 flex items-center justify-center h-full">
@@ -246,7 +270,7 @@
             <MoleculesWaitItem :wait-item="flowItem" />
           </div>
         </div>
-        <AtomsCommonModalButton class="mt-4 " >
+        <AtomsCommonModalButton class="mt-4 "  >
           <template v-slot:button>
             <button class="rounded-xl border-[#842ff7] border hover:bg-[#842ff7] hover:text-white px-3 py-1 transition duration-100 mb-2">
               <font-awesome-icon :icon="['fas', 'plus']" class="" />
