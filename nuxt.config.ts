@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     '@fortawesome/fontawesome-svg-core',
     '@fortawesome/free-solid-svg-icons',
     '@fortawesome/free-regular-svg-icons',
-    '@fortawesome/free-brands-svg-icons',
+    '@fortawesome/free-brands-svg-icons'
     ]
   },
   imports:{
@@ -29,7 +29,27 @@ export default defineNuxtConfig({
       'composables/**'
     ]
   },
+  
+  vite: {
+    build: {
+      target: ['esnext', 'es2022']
+    },
+    esbuild: {
+      target: "es2022"
+    },
+    optimizeDeps:{
+      esbuildOptions: {
+        target: "es2022",
+      }
+    }
+  },
   nitro: {
+    esbuild: {
+      options: {
+        // Node.js のバージョンのみ指定すればOK
+        target: 'es2022',
+      },
+    },
     hooks: {
       close: () => {
         const platform = process.platform

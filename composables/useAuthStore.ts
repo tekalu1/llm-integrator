@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('authStore', {
         } else {
           this.user = data.value
         }
+        return this.user
       } catch (e) {
         this.user = null
       }

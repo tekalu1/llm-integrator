@@ -30,17 +30,17 @@
   const onClickLogout = async () => {
         error.value = null
         try {
-        const { data, error: fetchError } = await useFetch('/api/auth/logout', {
-            method: 'POST',
-            body: {  }
-        })
-        if (fetchError.value) {
-            error.value = fetchError.value.data.error
-            return
-        }
-        // ログイン成功後、ユーザー情報を取得
-        await authStore.fetchUser()
-        navigateTo('/login')
+          const { data, error: fetchError } = await useFetch('/api/auth/logout', {
+              method: 'POST',
+              body: {  }
+          })
+          if (fetchError.value) {
+              error.value = fetchError.value.data.error
+              return
+          }
+          // ログイン成功後、ユーザー情報を取得
+          await authStore.fetchUser()
+          navigateTo('/login')
         } catch (e) {
           error.value = 'An error occurred'
         }

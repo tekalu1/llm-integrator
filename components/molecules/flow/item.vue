@@ -109,7 +109,7 @@
   
   const apiToken = ref('')
   const registerApiToken = () => {
-    flowStore.masterFlow.variables['generativeAiApiToken'] = apiToken.value
+    flowStore.masterFlow.variables['openAiApiKey'] = apiToken.value
   }
 
     const onGenerateFlowButtonClicked = async () => {

@@ -307,7 +307,7 @@ export const useFlowStore = defineStore('flowStore', {
       return evaluateConditionReturnByConditionValue(this.applyFlowVariables(condition))
     },
     isApiTokenRegistered(): boolean{
-      if ("generativeAiApiToken" in this.masterFlow.variables) {
+      if ("openAiApiKey" in this.masterFlow.variables) {
         return true
       }
       return false
@@ -321,7 +321,7 @@ export const useFlowStore = defineStore('flowStore', {
           method: 'POST',
           body: {
             "prompt": prompt, 
-            "token": this.masterFlow.variables["generativeAiApiToken"]
+            "token": this.masterFlow.variables["openAiApiKey"]
           },
           credentials: 'include'
       })
