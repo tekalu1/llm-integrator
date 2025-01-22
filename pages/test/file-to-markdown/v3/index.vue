@@ -126,7 +126,8 @@
 
     // ドキュメントのメタ情報取得
     const getDocumentMetaData = async() => {
-        await getDocumentList()
+        try{
+            await getDocumentList()
         documentListWithMetaData.value = []
         for(const document of documentList.value){
             console.log('document : ' + JSON.stringify(document))
@@ -150,6 +151,9 @@
                     }
                 )
             }
+        }
+        }catch(e){
+            console.error(e.message)
         }
     }
     
