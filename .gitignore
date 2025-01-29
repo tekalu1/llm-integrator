@@ -26,3 +26,4 @@ logs
 merged_code.txt
 
 server/db/
+server/tmp/

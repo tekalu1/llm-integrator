@@ -45,8 +45,7 @@
             </button>
         </template>
         <template v-slot:modal>
-
-          <div class="flex flex-col items-start justify-center overflow-auto relative w-[90vw] max-h-[90vh] text-xs">
+          <div class="flex flex-col items-start justify-start overflow-auto relative w-[90vw] max-h-[90vh] text-xs">
             <pre v-if="executionResult.success" class="bg-gray-50 p-4 rounded w-full">{{ formatResponse(executionResult.data) }}</pre>
             <pre v-if="!executionResult.success" class="bg-gray-50 p-4 rounded w-full">{{ formatResponse(executionResult.error) }}</pre>
           </div>
