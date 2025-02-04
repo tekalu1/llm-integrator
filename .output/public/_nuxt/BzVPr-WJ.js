@@ -1,0 +1,1 @@
+import{_ as s}from"./DyTulhq3.js";import{d as n,r as a,o as r,v as c,x as _,V as m,A as i}from"./JqZd4KxG.js";const l={class:"w-screen h-screen flex flex-col items-center justify-center text-xs bg-gray-200"},x=n({__name:"auth",setup(u){const e=a(!0);return r(()=>{e.value=!1}),(t,f)=>{const o=s;return c(),_("div",l,[m(t.$slots,"default"),i(o)])}}});export{x as default};

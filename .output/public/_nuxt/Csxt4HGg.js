@@ -1,0 +1,1 @@
+import{t,g as s,v as n,x as a,A as c,y as _}from"./JqZd4KxG.js";const r={},f={class:"w-full flex items-center justify-start"};function l(m,e){const o=s("font-awesome-icon");return n(),a("div",f,[c(o,{icon:["fas","flask"]}),e[0]||(e[0]=_("p",{class:"font-bold text-base ml-2"}," API Labo. ",-1))])}const p=t(r,[["render",l]]);export{p as _};
