@@ -2,7 +2,7 @@
   <div v-if="isLoggedIn" class="flex items-start justify-center w-full h-full  text-[#183153]">
     <OrganismsFlowView v-if="uiStore.getViewMode() === 'Flow'" :flowItem="flowStore.masterFlow" />
     <div v-show="uiStore.getViewMode() === 'Laboratory'" class="flex items-start justify-center w-full h-full ">
-      <div class="max-xl:w-[50vw] xl:w-[25vw] h-full">
+      <div class="h-full">
         <OrganismsSideMenu />
       </div>
       <div class="w-full h-full flex-grow relative"> 
