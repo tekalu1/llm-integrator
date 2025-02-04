@@ -168,7 +168,7 @@ export const useFlowStore = defineStore('flowStore', {
       const apiFlows = await $fetch(`/api/flow-store/get-flow-list`, {
         method: 'GET'
       })
-      if (apiFlows.error) {
+      if (apiFlows?.error) {
         console.error('Failed to load flows from API:', apiFlows.error)
         return
       }
