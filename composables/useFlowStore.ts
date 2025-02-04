@@ -145,13 +145,6 @@ export const useFlowStore = defineStore('flowStore', {
     applyFlowVariablesOnString(text: string): string {
       return applyFlowVariablesOnString(text, this.masterFlow.variables)
     },
-    loadFlows(){
-      try{
-        this.savedFlowItems = JSON.parse(localStorage.getItem('saved-flow-items') || '[]');
-      }catch(e){
-        console.error('Failed to load saved flows:', e);
-      }
-    },
     clearLegacyData(){
       try{
         this.clearExecutionResultsFlowItem(this.masterFlow)
@@ -171,39 +164,89 @@ export const useFlowStore = defineStore('flowStore', {
         console.error('Failed to load saved flows:', e);
       }
     },
-    saveFlow(flowItem: FlowItem, isSaveAs = false) {
-      const savedflowItem: SavedFlowItem = {
-        id: uuidv4(),
-        flowItem: flowItem,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
+    async loadFlows() {
+      const apiFlows = await $fetch(`/api/flow-store/get-flow-list`, {
+        method: 'GET'
+      })
+      if (apiFlows.error) {
+        console.error('Failed to load flows from API:', apiFlows.error)
+        return
       }
-
-      if(isSaveAs || this.uuuidOfLoadedSavedFlow === ''){
-        this.savedFlowItems.push(savedflowItem)
-      }else{
-        const existingIndex = this.savedFlowItems.findIndex((item: SavedFlowItem) => item.id === this.uuuidOfLoadedSavedFlow);
-        this.savedFlowItems[existingIndex] = savedflowItem
-      }
-      localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
-      this.uuuidOfLoadedSavedFlow = savedflowItem.id;
-    },
-    deleteSavedFlow(deleteIndex: number) {
-      this.savedFlowItems.splice(deleteIndex,1)
-      localStorage.setItem('saved-flow-items', JSON.stringify(this.savedFlowItems));
-    },
-    loadFlow(savedFlowItem: SavedFlowItem) {
-      try {
-        const stored = localStorage.getItem('saved-flow-items');
-        if (stored) {
-          this.savedFlowItems = JSON.parse(stored);
+      if (apiFlows && apiFlows.length > 0) {
+        this.savedFlowItems = apiFlows
+      } else {
+        // API 経由のデータが無い場合、legacy の localStorage から読み込み・移行
+        try {
+          const lsData = JSON.parse(localStorage.getItem('saved-flow-items') || '[]')
+          if (Array.isArray(lsData) && lsData.length > 0) {
+            this.savedFlowItems = lsData
+            // localStorage の各データを API 経由で保存（新規保存扱い）
+            for (const flow of lsData) {
+              await $fetch<SavedFlowItem>('/api/flow-store/save-flow', {
+                method: 'POST',
+                body: {
+                  flowItem: flow.flowItem,
+                  isSaveAs: true
+                }
+              })
+            }
+            localStorage.removeItem('saved-flow-items')
+          }
+        } catch (e) {
+          console.error('Failed to load flows from localStorage:', e)
         }
-      } catch (e) {
-        console.error('Failed to load saved flows:', e);
       }
-      
-      this.importFlow(savedFlowItem.flowItem)
-      this.uuuidOfLoadedSavedFlow = savedFlowItem.id
+    },
+
+    async saveFlow(flowItem: FlowItem, isSaveAs = false) {
+      const payload = {
+        flowItem,
+        isSaveAs,
+        // 更新の場合、現在ロード済みの id を送信
+        id: isSaveAs ? undefined : this.uuuidOfLoadedSavedFlow || undefined
+      }
+      console.log(payload)
+      try {
+        const savedFlow = await $fetch<SavedFlowItem>('/api/flow-store/save-flow', {
+          method: 'POST',
+          body: payload
+        })
+        // ローカルの state を更新
+        const index = this.savedFlowItems.findIndex(item => item.id === savedFlow.id)
+        if (index !== -1) {
+          this.savedFlowItems[index] = savedFlow
+        } else {
+          this.savedFlowItems.push(savedFlow)
+        }
+        this.uuuidOfLoadedSavedFlow = savedFlow.id
+        // legacy localStorage のデータがあれば削除
+        localStorage.removeItem('saved-flow-items')
+      } catch (error) {
+        console.error('Failed to save flow:', error)
+      }
+    },
+
+    async deleteSavedFlow(deleteIndex: number) {
+      const flowToDelete = this.savedFlowItems[deleteIndex]
+      try {
+        await $fetch(`/api/flow-store/flows/${flowToDelete.id}`, {
+          method: 'DELETE'
+        })
+        this.savedFlowItems.splice(deleteIndex, 1)
+        localStorage.removeItem('saved-flow-items')
+      } catch (error) {
+        console.error('Failed to delete flow:', error)
+      }
+    },
+
+    async loadFlow(savedFlowItem: SavedFlowItem) {
+      try {
+        const flow = await $fetch<SavedFlowItem>(`/api/flow-store/flows/${savedFlowItem.id}`)
+        this.importFlow(flow.flowItem)
+        this.uuuidOfLoadedSavedFlow = savedFlowItem.id
+      } catch (error) {
+        console.error('Failed to load flow:', error)
+      }
     },
     importFlow(flowItem: FlowItem) {
       try{

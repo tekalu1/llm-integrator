@@ -3,8 +3,8 @@
   const flowStore = useFlowStore();
   const isLoading = ref(true)
 
-  onMounted(() => {
-    flowStore.loadFlows()
+  onMounted(async() => {
+    await flowStore.loadFlows()
     isLoading.value = false
   })
 </script>
